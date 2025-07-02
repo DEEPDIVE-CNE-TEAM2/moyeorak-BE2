@@ -42,7 +42,7 @@ public class UserService {
                 .name(dto.getName())
                 .gender(dto.getGender())
                 .phone(dto.getPhone())
-                .role(dto.getRole())
+                .role(dto.getRole())  // 역할 설정
                 .address(dto.getAddress())
                 .build();
 
@@ -133,6 +133,7 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
+        // 비밀번호가 일치하는지 확인
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
@@ -152,5 +153,4 @@ public class UserService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
     }
-
 }

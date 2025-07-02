@@ -6,6 +6,7 @@ import com.example.moyeorak.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.example.moyeorak.dto.UserLoginRequestDto;
 import com.example.moyeorak.dto.LoginResponseDto;
@@ -52,11 +53,9 @@ public class UserController {
         UserResponseDto responseDto = userService.getMyInfo(email);
         return ResponseEntity.ok(responseDto);
     }
+
     @PutMapping("/me")
-    public ResponseEntity<?> updateMyInfo(
-            @RequestBody UserUpdateRequestDto dto,
-            HttpServletRequest request
-    ) {
+    public ResponseEntity<?> updateMyInfo(@RequestBody UserUpdateRequestDto dto, HttpServletRequest request) {
         String token = request.getHeader("Authorization");
 
         if (token == null || !token.startsWith("Bearer ")) {
@@ -80,13 +79,14 @@ public class UserController {
         return ResponseEntity.ok().body(Map.of("message", "비밀번호가 성공적으로 변경되었습니다."));
     }
 
-    @DeleteMapping
+    @DeleteMapping("/delete")
     public ResponseEntity<?> deleteUser(@RequestHeader("Authorization") String authHeader,
                                         @RequestBody UserDeleteRequestDto dto) {
         String jwt = authHeader.replace("Bearer ", "");
         String email = jwtProvider.getEmail(jwt);
 
         userService.deleteUser(email, dto);
+
         return ResponseEntity.ok().body(Map.of("message", "회원 탈퇴가 성공적으로 처리되었습니다."));
     }
 
@@ -121,5 +121,4 @@ public class UserController {
         String newAccessToken = jwtProvider.generateToken(email);
         return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
     }
-
 }

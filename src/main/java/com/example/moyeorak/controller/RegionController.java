@@ -44,6 +44,8 @@ public class RegionController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> delete(@PathVariable Long id) {
-        return regionService.deleteRegion(id);
+        regionService.deleteRegion(id);
+        return ResponseEntity.ok("삭제 되었습니다");
     }
+
 }

@@ -29,7 +29,6 @@ public class JwtProvider {
                 .compact();
     }
 
-    // ❗ 여기가 오류 해결 핵심
     public String generateRefreshToken(String email) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + 1000L * 60 * 60 * 24 * 7); // 7일
@@ -57,5 +56,17 @@ public class JwtProvider {
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
+    }
+
+    public String generateToken(String email, String role) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + 1000L * 60 * 60); // 1시간
+        return Jwts.builder()
+                .setSubject(email)
+                .claim("roles", role)  // 사용자 역할 추가
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(secretKey, SignatureAlgorithm.HS256)
+                .compact();
     }
 }

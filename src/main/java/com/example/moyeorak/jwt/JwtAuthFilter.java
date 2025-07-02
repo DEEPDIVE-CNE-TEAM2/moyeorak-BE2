@@ -5,6 +5,7 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -33,8 +34,12 @@ public class JwtAuthFilter extends GenericFilter {
                 var user = userRepository.findByEmail(email).orElse(null);
 
                 if (user != null) {
+                    // ROLE_ 접두사 추가
                     var auth = new UsernamePasswordAuthenticationToken(
-                            user, null, List.of()); // 권한 부여는 추후 설정
+                            user,
+                            null,
+                            List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name().toUpperCase()))  // ROLE_ 접두사 추가
+                    );
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
             }
