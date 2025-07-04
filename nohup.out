@@ -1,0 +1,191 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.5.3)
+
+2025-07-02T07:24:19.495Z  INFO 2487 --- [moyeorak] [           main] c.example.moyeorak.MoyeorakApplication   : Starting MoyeorakApplication v0.0.1-SNAPSHOT using Java 17.0.15 with PID 2487 (/opt/moyeorak-BE/build/libs/moyeorak-0.0.1-SNAPSHOT.jar started by root in /opt/moyeorak-BE)
+2025-07-02T07:24:19.501Z  INFO 2487 --- [moyeorak] [           main] c.example.moyeorak.MoyeorakApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-07-02T07:24:21.713Z  INFO 2487 --- [moyeorak] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-07-02T07:24:21.904Z  INFO 2487 --- [moyeorak] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 161 ms. Found 4 JPA repository interfaces.
+2025-07-02T07:24:23.781Z  INFO 2487 --- [moyeorak] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-07-02T07:24:23.824Z  INFO 2487 --- [moyeorak] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-07-02T07:24:23.824Z  INFO 2487 --- [moyeorak] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.42]
+2025-07-02T07:24:24.140Z  INFO 2487 --- [moyeorak] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-07-02T07:24:24.143Z  INFO 2487 --- [moyeorak] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 4505 ms
+2025-07-02T07:24:24.593Z  INFO 2487 --- [moyeorak] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-07-02T07:24:24.793Z  INFO 2487 --- [moyeorak] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.18.Final
+2025-07-02T07:24:24.901Z  INFO 2487 --- [moyeorak] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-07-02T07:24:25.806Z  INFO 2487 --- [moyeorak] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-07-02T07:24:25.890Z  INFO 2487 --- [moyeorak] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-07-02T07:24:26.408Z  INFO 2487 --- [moyeorak] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@250a946
+2025-07-02T07:24:26.414Z  INFO 2487 --- [moyeorak] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-07-02T07:24:26.537Z  WARN 2487 --- [moyeorak] [           main] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-07-02T07:24:26.540Z  WARN 2487 --- [moyeorak] [           main] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-07-02T07:24:26.608Z  INFO 2487 --- [moyeorak] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-07-02T07:24:29.502Z  INFO 2487 --- [moyeorak] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Hibernate: 
+    alter table users 
+       modify column gender enum ('female','male') not null
+Hibernate: 
+    alter table users 
+       modify column role enum ('admin','user') not null
+2025-07-02T07:24:29.812Z  INFO 2487 --- [moyeorak] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-07-02T07:24:31.381Z  WARN 2487 --- [moyeorak] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-07-02T07:24:31.451Z  WARN 2487 --- [moyeorak] [           main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: ccb89324-61d2-4aac-9374-d0ac68dc1f10
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-07-02T07:24:31.466Z  INFO 2487 --- [moyeorak] [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-07-02T07:24:32.876Z  INFO 2487 --- [moyeorak] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-07-02T07:24:32.929Z  INFO 2487 --- [moyeorak] [           main] c.example.moyeorak.MoyeorakApplication   : Started MoyeorakApplication in 14.93 seconds (process running for 16.54)
+2025-07-02T07:24:40.137Z  INFO 2487 --- [moyeorak] [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-07-02T07:24:40.138Z  INFO 2487 --- [moyeorak] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-07-02T07:24:40.141Z  INFO 2487 --- [moyeorak] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+Exception in thread "SpringApplicationShutdownHook" java.lang.NoClassDefFoundError: ch/qos/logback/classic/spi/ThrowableProxy
+	at ch.qos.logback.classic.spi.LoggingEvent.<init>(LoggingEvent.java:145)
+	at ch.qos.logback.classic.Logger.buildLoggingEventAndAppend(Logger.java:424)
+	at ch.qos.logback.classic.Logger.filterAndLog_0_Or3Plus(Logger.java:386)
+	at ch.qos.logback.classic.Logger.log(Logger.java:780)
+	at org.apache.commons.logging.LogAdapter$Slf4jLocationAwareLog.warn(LogAdapter.java:445)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1175)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.doClose(ServletWebServerApplicationContext.java:179)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:1126)
+	at org.springframework.boot.SpringApplicationShutdownHook.closeAndWait(SpringApplicationShutdownHook.java:147)
+	at java.base/java.lang.Iterable.forEach(Iterable.java:75)
+	at org.springframework.boot.SpringApplicationShutdownHook.run(SpringApplicationShutdownHook.java:116)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+Caused by: java.lang.ClassNotFoundException: ch.qos.logback.classic.spi.ThrowableProxy
+	... 12 more
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.5.3)
+
+2025-07-02T15:29:34.432Z  INFO 5593 --- [moyeorak] [           main] c.example.moyeorak.MoyeorakApplication   : Starting MoyeorakApplication v0.0.1-SNAPSHOT using Java 17.0.15 with PID 5593 (/opt/moyeorak-BE/build/libs/moyeorak-0.0.1-SNAPSHOT.jar started by root in /opt/moyeorak-BE)
+2025-07-02T15:29:34.438Z  INFO 5593 --- [moyeorak] [           main] c.example.moyeorak.MoyeorakApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-07-02T15:29:36.418Z  INFO 5593 --- [moyeorak] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-07-02T15:29:36.599Z  INFO 5593 --- [moyeorak] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 157 ms. Found 4 JPA repository interfaces.
+2025-07-02T15:29:38.271Z  INFO 5593 --- [moyeorak] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-07-02T15:29:38.304Z  INFO 5593 --- [moyeorak] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-07-02T15:29:38.306Z  INFO 5593 --- [moyeorak] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.42]
+2025-07-02T15:29:38.560Z  INFO 5593 --- [moyeorak] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-07-02T15:29:38.562Z  INFO 5593 --- [moyeorak] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 4010 ms
+2025-07-02T15:29:38.991Z  INFO 5593 --- [moyeorak] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-07-02T15:29:39.121Z  INFO 5593 --- [moyeorak] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.18.Final
+2025-07-02T15:29:39.206Z  INFO 5593 --- [moyeorak] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-07-02T15:29:39.969Z  INFO 5593 --- [moyeorak] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-07-02T15:29:40.040Z  INFO 5593 --- [moyeorak] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-07-02T15:29:40.469Z  INFO 5593 --- [moyeorak] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@433d93e7
+2025-07-02T15:29:40.473Z  INFO 5593 --- [moyeorak] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-07-02T15:29:40.579Z  WARN 5593 --- [moyeorak] [           main] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-07-02T15:29:40.584Z  WARN 5593 --- [moyeorak] [           main] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-07-02T15:29:40.652Z  INFO 5593 --- [moyeorak] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-07-02T15:29:43.787Z  INFO 5593 --- [moyeorak] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Hibernate: 
+    alter table users 
+       modify column gender enum ('female','male') not null
+Hibernate: 
+    alter table users 
+       modify column role enum ('admin','user') not null
+2025-07-02T15:29:44.041Z  INFO 5593 --- [moyeorak] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-07-02T15:29:45.557Z  WARN 5593 --- [moyeorak] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-07-02T15:29:45.625Z  WARN 5593 --- [moyeorak] [           main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: bd303696-efdd-4125-bef5-511f7d9a71a6
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-07-02T15:29:45.639Z  INFO 5593 --- [moyeorak] [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-07-02T15:29:46.998Z  INFO 5593 --- [moyeorak] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-07-02T15:29:47.036Z  INFO 5593 --- [moyeorak] [           main] c.example.moyeorak.MoyeorakApplication   : Started MoyeorakApplication in 13.802 seconds (process running for 15.187)
+2025-07-02T15:29:47.218Z  INFO 5593 --- [moyeorak] [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-07-02T15:29:47.219Z  INFO 5593 --- [moyeorak] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-07-02T15:29:47.222Z  INFO 5593 --- [moyeorak] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
+2025-07-02T15:46:38.860Z  INFO 5593 --- [moyeorak] [ionShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-07-02T15:46:38.866Z  INFO 5593 --- [moyeorak] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-07-02T15:46:38.877Z  INFO 5593 --- [moyeorak] [ionShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-07-02T15:46:38.881Z  INFO 5593 --- [moyeorak] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-07-02T15:46:38.897Z  INFO 5593 --- [moyeorak] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.5.3)
+
+2025-07-03T08:26:02.836Z  INFO 8495 --- [moyeorak] [           main] c.example.moyeorak.MoyeorakApplication   : Starting MoyeorakApplication v0.0.1-SNAPSHOT using Java 17.0.15 with PID 8495 (/opt/moyeorak-BE/build/libs/moyeorak-0.0.1-SNAPSHOT.jar started by root in /opt/moyeorak-BE)
+2025-07-03T08:26:02.845Z  INFO 8495 --- [moyeorak] [           main] c.example.moyeorak.MoyeorakApplication   : No active profile set, falling back to 1 default profile: "default"
+2025-07-03T08:26:04.930Z  INFO 8495 --- [moyeorak] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-07-03T08:26:05.131Z  INFO 8495 --- [moyeorak] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 172 ms. Found 4 JPA repository interfaces.
+2025-07-03T08:26:06.963Z  INFO 8495 --- [moyeorak] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-07-03T08:26:07.002Z  INFO 8495 --- [moyeorak] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-07-03T08:26:07.002Z  INFO 8495 --- [moyeorak] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.42]
+2025-07-03T08:26:07.262Z  INFO 8495 --- [moyeorak] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-07-03T08:26:07.265Z  INFO 8495 --- [moyeorak] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 4287 ms
+2025-07-03T08:26:07.734Z  INFO 8495 --- [moyeorak] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-07-03T08:26:07.882Z  INFO 8495 --- [moyeorak] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.18.Final
+2025-07-03T08:26:07.980Z  INFO 8495 --- [moyeorak] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-07-03T08:26:08.800Z  INFO 8495 --- [moyeorak] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-07-03T08:26:08.879Z  INFO 8495 --- [moyeorak] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-07-03T08:26:09.405Z  INFO 8495 --- [moyeorak] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@433d93e7
+2025-07-03T08:26:09.411Z  INFO 8495 --- [moyeorak] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-07-03T08:26:09.519Z  WARN 8495 --- [moyeorak] [           main] org.hibernate.orm.deprecation            : HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-07-03T08:26:09.526Z  WARN 8495 --- [moyeorak] [           main] org.hibernate.orm.deprecation            : HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-07-03T08:26:09.594Z  INFO 8495 --- [moyeorak] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-07-03T08:26:12.967Z  INFO 8495 --- [moyeorak] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Hibernate: 
+    alter table users 
+       modify column gender enum ('female','male') not null
+Hibernate: 
+    alter table users 
+       modify column role enum ('admin','user') not null
+2025-07-03T08:26:13.218Z  INFO 8495 --- [moyeorak] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-07-03T08:26:14.810Z  WARN 8495 --- [moyeorak] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-07-03T08:26:14.887Z  WARN 8495 --- [moyeorak] [           main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: cba68f00-dc0f-4b46-b26f-a7121461e06d
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-07-03T08:26:14.901Z  INFO 8495 --- [moyeorak] [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-07-03T08:26:16.345Z  INFO 8495 --- [moyeorak] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-07-03T08:26:16.381Z  INFO 8495 --- [moyeorak] [           main] c.example.moyeorak.MoyeorakApplication   : Started MoyeorakApplication in 14.868 seconds (process running for 16.303)
+2025-07-03T08:26:18.630Z  INFO 8495 --- [moyeorak] [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-07-03T08:26:18.631Z  INFO 8495 --- [moyeorak] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-07-03T08:26:18.635Z  INFO 8495 --- [moyeorak] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
