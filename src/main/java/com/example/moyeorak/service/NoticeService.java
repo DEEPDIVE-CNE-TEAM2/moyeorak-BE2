@@ -65,14 +65,6 @@ public class NoticeService {
                 .collect(Collectors.toList());
     }
 
-    // ✅ 조회수 증가
-    @Transactional
-    public void incrementViewCount(Long id) {
-        log.info("[POST] 공지 조회수 증가 - ID: {}", id);
-        Notice notice = findNotice(id);
-        notice.setViewCount(notice.getViewCount() + 1);
-    }
-
     // ✅ 공지 수정 (작성자 검증 포함)
     @Transactional
     public NoticeDto updateNotice(Long noticeId, Long userId, NoticeRequest request) throws AccessDeniedException {

@@ -49,13 +49,6 @@ public class NoticeController {
         return ResponseEntity.ok(noticeService.getNoticesByRegionId(regionId));
     }
 
-    // ✅ 조회수 증가
-    @PostMapping("/{id}/views")
-    public ResponseEntity<Void> increaseViews(@PathVariable Long id) {
-        noticeService.incrementViewCount(id);
-        return ResponseEntity.ok().build();
-    }
-
     // ✅ 공지 수정
     @PatchMapping("/{id}")
     public ResponseEntity<NoticeDto> updateNotice(@PathVariable Long id,
