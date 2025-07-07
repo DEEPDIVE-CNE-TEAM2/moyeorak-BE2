@@ -28,7 +28,11 @@ public class SecurityConfig {
                                 "/api/rentals", "/api/rentals/{id}",
                                 "/api/programs",              // ✅ 추가
                                 "/api/programs/{id}",          // ✅ 추가 (상세 대비)
-                                "/api/enrollments", "/api/enrollments/**"
+                                "/api/enrollments", "/api/enrollments/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
+                                "/v3/api-docs.yaml"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
