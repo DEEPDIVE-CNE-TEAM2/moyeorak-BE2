@@ -25,20 +25,17 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/actuator/health", "/actuator/info", "/health",
-                                "/api/users/signup", "/api/users/login", "/api/users/check-email", "/api/users/check-phone",
+                                "/api/users/signup", "/api/users/login",
+                                "/api/users/check-email", "/api/users/check-phone",
                                 "/api/regions/**",
                                 "/api/rentals", "/api/rentals/{id}",
-                                "/api/programs",
-                                "/api/programs/{id}",
+                                "/api/programs", "/api/programs/{id}",
                                 "/api/enrollments", "/api/enrollments/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/v3/api-docs/**",
-                                "/v3/api-docs.yaml"
+                                "/swagger-ui/**", "/swagger-ui.html",
+                                "/v3/api-docs/**", "/v3/api-docs.yaml"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
@@ -46,10 +43,14 @@ public class SecurityConfig {
 
         return http.build();
     }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:8080")); // 프론트, Swagger 허용
+        config.setAllowedOrigins(List.of(
+                "http://localhost:3000",
+                "http://localhost:8080"
+        ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
