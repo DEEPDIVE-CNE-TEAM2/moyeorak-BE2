@@ -80,4 +80,11 @@ public class RentalController {
         rentalService.deleteRental(id);
         return ResponseEntity.ok(new MessageResponse("삭제되었습니다."));
     }
+
+    // ✅ 지역별 대관 목록 조회
+    @GetMapping("/region/{regionId}")
+    public ResponseEntity<List<RentalListResponse>> getRentalsByRegion(@PathVariable Long regionId) {
+        log.info("[GET] 지역별 대관 조회 요청 - Region ID: {}", regionId);
+        return ResponseEntity.ok(rentalService.getRentalsByRegion(regionId));
+    }
 }

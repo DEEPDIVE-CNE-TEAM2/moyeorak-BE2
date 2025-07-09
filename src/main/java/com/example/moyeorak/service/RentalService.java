@@ -6,19 +6,23 @@ import com.example.moyeorak.entity.Rental;
 import com.example.moyeorak.entity.User;
 import com.example.moyeorak.repository.RegionRepository;
 import com.example.moyeorak.repository.RentalRepository;
-import jakarta.transaction.Transactional;
+import com.example.moyeorak.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class RentalService {
 
     private final RentalRepository rentalRepository;
@@ -27,8 +31,8 @@ public class RentalService {
     /**
      * ✅ 대관 등록
      */
+    @Transactional
     public RentalCreateResponse createRental(RentalRequest request, String adminEmail) {
-        // 🔒 관리자 이메일로 본인이 관리하는 Region을 찾음
         Region region = regionRepository.findAll().stream()
                 .filter(r -> r.getManager() != null && adminEmail.equals(r.getManager().getEmail()))
                 .findFirst()
@@ -57,27 +61,21 @@ public class RentalService {
         return mapToCreateResponse(rentalRepository.save(rental));
     }
 
-    /**
-     * ✅ 전체 대관 목록 조회
-     */
+    /** ✅ 전체 대관 목록 조회 */
     public List<RentalListResponse> getAllRentals() {
         return rentalRepository.findAll().stream()
                 .map(this::mapToListResponse)
                 .toList();
     }
 
-    /**
-     * ✅ 대관 상세 조회
-     */
+    /** ✅ 대관 상세 조회 */
     public RentalDetailResponse getRentalById(Long id) {
         Rental rental = rentalRepository.findById(Math.toIntExact(id))
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 대관 정보가 없습니다."));
         return mapToDetailResponse(rental);
     }
 
-    /**
-     * ✅ 대관 부분 수정
-     */
+    /** ✅ 대관 부분 수정 */
     @Transactional
     public RentalCreateResponse partialUpdateRental(Long id, Map<String, Object> updates) {
         Rental rental = rentalRepository.findById(Math.toIntExact(id))
@@ -128,14 +126,20 @@ public class RentalService {
         return mapToCreateResponse(rental);
     }
 
-    /**
-     * ✅ 대관 삭제
-     */
+    /** ✅ 대관 삭제 */
+    @Transactional
     public void deleteRental(Long id) {
         if (!rentalRepository.existsById(Math.toIntExact(id))) {
             throw new IllegalArgumentException("해당 대관 정보가 없습니다.");
         }
         rentalRepository.deleteById(Math.toIntExact(id));
+    }
+
+    /** ✅ 지역별 대관 조회 */
+    public List<RentalListResponse> getRentalsByRegion(Long regionId) {
+        return rentalRepository.findByRegionId(regionId).stream()
+                .map(this::mapToListResponse)
+                .toList();
     }
 
     // ===================== 응답 변환 =====================
@@ -199,4 +203,5 @@ public class RentalService {
     private String formatDateRange(LocalDate start, LocalDate end) {
         return start + " ~ " + end;
     }
+
 }

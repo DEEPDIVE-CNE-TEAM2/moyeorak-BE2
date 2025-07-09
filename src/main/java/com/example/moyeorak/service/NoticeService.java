@@ -10,11 +10,13 @@ import com.example.moyeorak.repository.RegionRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -109,5 +111,15 @@ public class NoticeService {
 
     private NoticeDto toDto(Notice notice) {
         return NoticeDto.fromEntity(notice);
+    }
+
+    // NoticeService.java
+    public NoticeDto getNoticeByRegion(Long noticeId, Long regionId) {
+        log.info("[GET] 지역별 공지 단건 조회 요청 - regionId: {}, noticeId: {}", regionId, noticeId);
+
+        Notice notice = noticeRepository.findByIdAndRegionId(noticeId, regionId)
+                .orElseThrow(() -> new EntityNotFoundException("해당 지역에 공지사항이 존재하지 않습니다."));
+
+        return toDto(notice);
     }
 }

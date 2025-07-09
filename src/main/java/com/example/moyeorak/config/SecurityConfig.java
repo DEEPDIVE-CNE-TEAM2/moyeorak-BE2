@@ -33,9 +33,12 @@ public class SecurityConfig {
                                 "/api/users/check-email", "/api/users/check-phone",
                                 "/api/regions/**",
                                 "/api/programs/region/**",
-                                "/api/rentals", "/api/rentals/{id}",
+                                "/api/rentals", "/api/rentals/{id}", "/api/rentals/region/**",
                                 "/api/programs", "/api/programs/{id}",
                                 "/api/enrollments", "/api/enrollments/**",
+                                "/api/main-images/region/**",
+                                "/api/notices/region/**",
+                                "/api/notices/{id}",
                                 "/swagger-ui/**", "/swagger-ui.html",
                                 "/v3/api-docs/**", "/v3/api-docs.yaml"
                         ).permitAll()

@@ -75,4 +75,14 @@ public class NoticeController {
         noticeService.deleteNotice(id, userId);
         return ResponseEntity.noContent().build();
     }
+
+    // NoticeController.java
+    @GetMapping("/region/{regionId}/{noticeId}")
+    public ResponseEntity<NoticeDto> getNoticeByRegion(
+            @PathVariable Long regionId,
+            @PathVariable Long noticeId
+    ) {
+        log.info("[GET] 지역별 공지 단건 조회 - regionId: {}, noticeId: {}", regionId, noticeId);
+        return ResponseEntity.ok(noticeService.getNoticeByRegion(noticeId, regionId));
+    }
 }
