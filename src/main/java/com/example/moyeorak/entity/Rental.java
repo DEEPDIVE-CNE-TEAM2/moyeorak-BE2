@@ -71,4 +71,8 @@ public class Rental {
 
     @Column(length = 255, nullable = false)
     private String address;
+
+    @Column(nullable = true)
+    private Integer area;
+
 }

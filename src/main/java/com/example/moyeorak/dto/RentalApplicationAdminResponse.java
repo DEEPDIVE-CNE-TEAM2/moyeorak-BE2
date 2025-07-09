@@ -17,7 +17,8 @@ public class RentalApplicationAdminResponse {
     private String requestedTime;
 
     private String applicantName;
-    private String status;         // 예: "approved"
-    private String statusLabel;    // 예: "승인" ← ✅ 추가
+    private String status;
+    private String statusLabel;
+    private Integer peopleCount;
 }
 

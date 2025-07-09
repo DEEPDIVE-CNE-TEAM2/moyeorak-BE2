@@ -65,4 +65,7 @@ public class RentalRequest {
     @NotBlank
     @Size(max = 255)
     private String address;
+
+    @Min(0)
+    private Integer area;
 }

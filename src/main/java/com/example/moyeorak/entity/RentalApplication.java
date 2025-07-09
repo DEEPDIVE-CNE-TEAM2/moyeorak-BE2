@@ -54,6 +54,9 @@ public class RentalApplication {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(nullable = false)
+    private Integer peopleCount;
+
     @PrePersist
     public void onCreate() {
         this.createdAt = LocalDateTime.now();

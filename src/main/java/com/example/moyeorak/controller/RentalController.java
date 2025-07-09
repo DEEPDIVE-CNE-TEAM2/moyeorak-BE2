@@ -14,16 +14,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/rentals")
 @RequiredArgsConstructor
+@Slf4j
 public class RentalController {
 
     private final RentalService rentalService;
     private final JwtProvider jwtProvider;
 
-    // ✅ 대관 등록 (전체 데이터 + 지역명 + 담당자 이메일 포함)
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<RentalCreateResponse> createRental(
@@ -42,21 +41,37 @@ public class RentalController {
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    // ✅ 대관 목록 조회 (이미지, 장소명, 주소, 운영시간, 정원)
-    @GetMapping
-    public ResponseEntity<List<RentalListResponse>> getAllRentals() {
-        log.info("[GET] 전체 대관 목록 조회");
-        return ResponseEntity.ok(rentalService.getAllRentals());
+    // ✅ 관리자 담당 지역의 대관 목록만 조회
+    @GetMapping("/admin/list")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<RentalListResponse>> getRentalsByAdmin(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        if (token == null || !token.startsWith("Bearer ")) {
+            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+        }
+
+        String email = jwtProvider.getEmail(token.substring(7));
+        log.info("[GET] 관리자 자기 지역 대관 목록 조회 - 관리자: {}", email);
+
+        return ResponseEntity.ok(rentalService.getRentalsByManagerEmail(email));
     }
 
-    // ✅ 대관 상세 조회 (종목, 장소, 주소, 운영시간, 접수기간, 취소기한, 정원, 문의)
-    @GetMapping("/{id}")
-    public ResponseEntity<RentalDetailResponse> getRentalById(@PathVariable Long id) {
-        log.info("[GET] 대관 상세 조회 요청 - ID: {}", id);
-        return ResponseEntity.ok(rentalService.getRentalById(id));
+    // ✅ 지역별 대관 목록 조회 (사용자용)
+    @GetMapping("/region/{regionId}")
+    public ResponseEntity<List<RentalListResponse>> getRentalsByRegion(@PathVariable Long regionId) {
+        log.info("[GET] 지역별 대관 조회 요청 - Region ID: {}", regionId);
+        return ResponseEntity.ok(rentalService.getRentalsByRegion(regionId));
     }
 
-    // ✅ 대관 수정 (관리자만 가능) - 응답은 생성 형식
+    // ✅ 지역별 대관 상세 조회
+    @GetMapping("/region/{regionId}/{rentalId}")
+    public ResponseEntity<RentalDetailResponse> getRentalDetailByRegion(
+            @PathVariable Long regionId,
+            @PathVariable Long rentalId) {
+        log.info("[GET] 지역 {}의 대관 상세 조회 - Rental ID: {}", regionId, rentalId);
+        return ResponseEntity.ok(rentalService.getRentalDetailInRegion(regionId, rentalId));
+    }
+
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<RentalCreateResponse> patchRental(
@@ -72,7 +87,6 @@ public class RentalController {
         return ResponseEntity.ok(updated);
     }
 
-    // ✅ 대관 삭제
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MessageResponse> deleteRental(@PathVariable Long id) {
@@ -81,10 +95,10 @@ public class RentalController {
         return ResponseEntity.ok(new MessageResponse("삭제되었습니다."));
     }
 
-    // ✅ 지역별 대관 목록 조회
-    @GetMapping("/region/{regionId}")
-    public ResponseEntity<List<RentalListResponse>> getRentalsByRegion(@PathVariable Long regionId) {
-        log.info("[GET] 지역별 대관 조회 요청 - Region ID: {}", regionId);
-        return ResponseEntity.ok(rentalService.getRentalsByRegion(regionId));
+    // ✅ 지역별 시설 목록 조회 (면적 포함)
+    @GetMapping("/facilities/region/{regionId}")
+    public ResponseEntity<List<FacilityResponse>> getFacilitiesByRegion(@PathVariable Long regionId) {
+        log.info("[GET] 지역별 시설 조회 요청 - Region ID: {}", regionId);
+        return ResponseEntity.ok(rentalService.getFacilitiesByRegion(regionId));
     }
 }

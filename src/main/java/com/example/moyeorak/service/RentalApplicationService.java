@@ -20,6 +20,9 @@ public class RentalApplicationService {
     private final UserRepository userRepository;
     private final RentalRepository rentalRepository;
 
+    /**
+     * ✅ 대관 신청 생성
+     */
     public RentalApplicationResponse createRentalApplication(RentalApplicationRequest request, String email) {
         log.info("[SERVICE] 대관 신청 by {}", email);
 
@@ -28,6 +31,10 @@ public class RentalApplicationService {
 
         Rental rental = rentalRepository.findById(request.getRentalId())
                 .orElseThrow(() -> new IllegalArgumentException("대관 공간이 존재하지 않습니다."));
+
+        if (request.getPeopleCount() > rental.getCapacity()) {
+            throw new IllegalArgumentException("신청 인원이 정원(" + rental.getCapacity() + "명)을 초과할 수 없습니다.");
+        }
 
         Region region = rental.getRegion();
 
@@ -39,6 +46,7 @@ public class RentalApplicationService {
                 .requestedStartTime(request.getRequestedStartTime())
                 .requestedEndTime(request.getRequestedEndTime())
                 .note(request.getNote())
+                .peopleCount(request.getPeopleCount()) // ✅ 인원 수 저장
                 .status(RentalApplicationStatus.PENDING)
                 .build();
 
@@ -116,8 +124,9 @@ public class RentalApplicationService {
                 .requestedDate(app.getRequestedDate())
                 .requestedTime(app.getRequestedStartTime() + " ~ " + app.getRequestedEndTime())
                 .capacity(rental.getCapacity())
-                .status(status.name().toLowerCase())        // "approved"
-                .statusLabel(status.getDisplayName())       // "승인"
+                .peopleCount(app.getPeopleCount()) // ✅ 응답 포함
+                .status(status.name().toLowerCase())
+                .statusLabel(status.getDisplayName())
                 .build();
     }
 
@@ -131,8 +140,9 @@ public class RentalApplicationService {
                 .requestedDate(app.getRequestedDate().toString())
                 .requestedTime(app.getRequestedStartTime() + " ~ " + app.getRequestedEndTime())
                 .applicantName(app.getUser().getName())
-                .status(status.name().toLowerCase())        // "approved"
-                .statusLabel(status.getDisplayName())       // "승인"
+                .peopleCount(app.getPeopleCount())
+                .status(status.name().toLowerCase())
+                .statusLabel(status.getDisplayName())
                 .build();
     }
 }

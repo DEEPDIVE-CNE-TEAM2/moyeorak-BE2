@@ -31,12 +31,13 @@ public class RentalCreateResponse {
 
     private Integer fee;
     private Integer capacity;
+    private Integer area; // ✅ 여기에 추가
 
     private String contact;
     private String address;
 
-    private String regionName;       // 지역 이름
-    private String managerName;      // 관리자 이름 ← 추가
-    private String managerEmail;     // 관리자 이메일
+    private String regionName;
+    private String managerName;
+    private String managerEmail;
 }
 

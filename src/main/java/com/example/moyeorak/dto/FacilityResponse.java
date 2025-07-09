@@ -7,11 +7,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RentalListResponse {
+public class FacilityResponse {
     private Integer id;
     private String location;
     private String address;
+    private Integer area;
     private String usageTime;
-    private Integer capacity;
-    private String imageUrl; // ✅ 여기에 추가
+    private String imageUrl; // ✅ 추가
 }
