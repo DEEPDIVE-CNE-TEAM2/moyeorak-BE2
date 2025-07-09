@@ -194,5 +194,12 @@ public class ProgramService {
         return start + " ~ " + end;
     }
 
+    public List<ProgramDisplayResponse> getProgramsByRegion(Long regionId) {
+        List<Program> programs = programRepository.findByRegion_Id(regionId);
+
+        return programs.stream()
+                .map(this::toDisplayResponse)
+                .toList();
+    }
 
 }

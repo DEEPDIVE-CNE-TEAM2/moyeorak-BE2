@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface ProgramRepository extends JpaRepository<Program, Long> {
@@ -17,4 +18,6 @@ public interface ProgramRepository extends JpaRepository<Program, Long> {
             LocalTime classStartTime,
             LocalTime classEndTime
     );
+
+    List<Program> findByRegion_Id(Long regionId);
 }

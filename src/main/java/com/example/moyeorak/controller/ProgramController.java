@@ -48,4 +48,9 @@ public class ProgramController {
         programService.deleteProgram(id);
         return ResponseEntity.ok(new MessageResponse("프로그램이 삭제되었습니다."));
     }
+
+    @GetMapping("/region/{regionId}")
+    public ResponseEntity<List<ProgramDisplayResponse>> getProgramsByRegion(@PathVariable Long regionId) {
+        return ResponseEntity.ok(programService.getProgramsByRegion(regionId));
+    }
 }

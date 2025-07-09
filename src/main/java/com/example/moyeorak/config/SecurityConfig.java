@@ -32,6 +32,7 @@ public class SecurityConfig {
                                 "/api/users/signup", "/api/users/login",
                                 "/api/users/check-email", "/api/users/check-phone",
                                 "/api/regions/**",
+                                "/api/programs/region/**",
                                 "/api/rentals", "/api/rentals/{id}",
                                 "/api/programs", "/api/programs/{id}",
                                 "/api/enrollments", "/api/enrollments/**",
