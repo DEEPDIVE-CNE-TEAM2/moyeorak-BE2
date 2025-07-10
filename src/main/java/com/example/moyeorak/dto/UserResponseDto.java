@@ -17,6 +17,7 @@ public class UserResponseDto {
     private String role;
     private LocalDate birth;
     private String regionName;
+    private Long regionId; // ✅ 추가됨
 
     public static UserResponseDto fromEntity(User user) {
         return new UserResponseDto(
@@ -27,7 +28,8 @@ public class UserResponseDto {
                 user.getGender().name(),
                 user.getRole().name(),
                 user.getBirth(),
-                user.getRegion() != null ? user.getRegion().getName() : null
+                user.getRegion() != null ? user.getRegion().getName() : null,
+                user.getRegion() != null ? user.getRegion().getId() : null // ✅ 추가됨
         );
     }
 }
