@@ -56,7 +56,10 @@ public class SecurityConfig {
         config.setAllowedOrigins(List.of(
                 "http://localhost:3000",
                 "http://localhost:8080",
-                "http://goorm-alb-1610121085.ap-northeast-2.elb.amazonaws.com"
+                "http://goorm-alb-1610121085.ap-northeast-2.elb.amazonaws.com",
+		"https://www.moyeorak.cloud",
+		"https://moyeorak.cloud",
+		"https://api.moyeorak.cloud"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
