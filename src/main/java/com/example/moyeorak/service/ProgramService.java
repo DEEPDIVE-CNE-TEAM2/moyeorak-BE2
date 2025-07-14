@@ -30,7 +30,7 @@ public class ProgramService {
         validateDuplicateTitle(dto.getTitle());
 
         Program program = buildProgramFromDto(dto);
-        return toDisplayResponse(programRepository.save(program), null); // 생성 시 사용자 없음
+        return toDisplayResponse(programRepository.save(program), null);
     }
 
     public List<ProgramDisplayResponse> getAllPrograms(Long userId) {
@@ -101,7 +101,7 @@ public class ProgramService {
             }
         });
 
-        return toDisplayResponse(program, null); // 사용자 정보 없이 반환
+        return toDisplayResponse(program, null);
     }
 
     @Transactional
@@ -172,9 +172,17 @@ public class ProgramService {
 
     private ProgramDisplayResponse toDisplayResponse(Program program, User user) {
         boolean inRegion = false;
+        Long userRegionId = null;
+        Long programRegionId = null;
+
         if (user != null && user.getRegion() != null && program.getRegion() != null) {
-            inRegion = user.getRegion().getId().equals(program.getRegion().getId());
+            userRegionId = user.getRegion().getId();
+            programRegionId = program.getRegion().getId();
+            inRegion = userRegionId.equals(programRegionId);
         }
+
+        log.info("관내 여부 판단: userRegionId = {}, programRegionId = {}, inRegion = {}",
+                userRegionId, programRegionId, inRegion);
 
         return ProgramDisplayResponse.builder()
                 .id(program.getId())
