@@ -22,4 +22,5 @@ public class EnrollmentResponse {
     private String cancelReason;
     private LocalTime classStartTime;
     private LocalTime classEndTime;
+    private String instructorName;
 }

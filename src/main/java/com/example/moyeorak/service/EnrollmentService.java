@@ -141,8 +141,10 @@ public class EnrollmentService {
                 .status(e.getStatus().name().toLowerCase())
                 .paidAmount(e.getPaidAmount())
                 .cancelReason(e.getCancelReason())
-                .classStartTime(e.getClassStartTime())     // ✅ 수강신청에 저장된 수업 시간 응답
+                .classStartTime(e.getClassStartTime())
                 .classEndTime(e.getClassEndTime())
+                .instructorName(e.getProgram().getInstructorName())
                 .build();
     }
+
 }

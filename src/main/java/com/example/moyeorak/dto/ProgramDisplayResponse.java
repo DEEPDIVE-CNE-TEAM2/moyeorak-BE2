@@ -24,4 +24,5 @@ public class ProgramDisplayResponse {
     private String description;
     private String imageUrl;
     private Long regionId;
+    private String instructorName;
 }

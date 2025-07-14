@@ -197,8 +197,10 @@ public class ProgramService {
                 .description(program.getDescription())
                 .imageUrl(program.getImageUrl())
                 .regionId(program.getRegion().getId())
+                .instructorName(program.getInstructorName())
                 .build();
     }
+
 
     private String formatDateRange(LocalDate start, LocalDate end) {
         return start + " ~ " + end;
