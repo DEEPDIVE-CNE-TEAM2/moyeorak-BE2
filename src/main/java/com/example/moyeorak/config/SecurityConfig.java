@@ -28,7 +28,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // ✅ CORS preflight 허용
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Preflight 허용
                         .requestMatchers(
                                 "/actuator/health", "/actuator/info", "/health",
                                 "/api/users/signup", "/api/users/login",
@@ -63,8 +63,9 @@ public class SecurityConfig {
                 "https://api.moyeorak.cloud"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
         config.setAllowCredentials(true);
+        config.setMaxAge(3600L); // 1시간 preflight 캐시
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

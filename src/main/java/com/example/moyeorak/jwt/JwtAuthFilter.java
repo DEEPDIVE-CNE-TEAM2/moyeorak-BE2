@@ -38,27 +38,33 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 String email = jwtProvider.getEmail(token);
                 String role = jwtProvider.getRole(token);
 
-                var user = userRepository.findByEmail(email).orElse(null);
+                if (email != null && role != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    var user = userRepository.findByEmail(email).orElse(null);
 
-                if (user != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    String authority = "ROLE_" + user.getRole().name().toUpperCase();
-                    var authorities = List.of(new SimpleGrantedAuthority(authority));
+                    if (user != null) {
+                        String authority = "ROLE_" + role.toUpperCase();
+                        var authorities = List.of(new SimpleGrantedAuthority(authority));
 
-                    var userDetails = new CustomUserDetails(
-                            user.getId(),
-                            user.getEmail(),
-                            user.getPassword(), // 🔐 비밀번호 포함
-                            authorities
-                    );
+                        var userDetails = new CustomUserDetails(
+                                user.getId(),
+                                user.getEmail(),
+                                user.getPassword(),
+                                authorities
+                        );
 
-                    var auth = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
-                    SecurityContextHolder.getContext().setAuthentication(auth);
+                        var auth = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
+                        SecurityContextHolder.getContext().setAuthentication(auth);
 
-                    log.debug("✅ JWT 인증 성공 - 사용자: {}, 권한: {}", email, authority);
+                        log.debug("✅ JWT 인증 성공 - 사용자: {}, 권한: {}", email, authority);
+                    } else {
+                        log.warn("❌ 사용자 DB 조회 실패 - email: {}", email);
+                    }
                 }
             } else {
                 log.warn("❌ 유효하지 않은 JWT 토큰: {}", token);
             }
+        } else {
+            log.debug("ℹ️ Authorization 헤더 없음 또는 Bearer 토큰 형식 아님");
         }
 
         filterChain.doFilter(request, response);
