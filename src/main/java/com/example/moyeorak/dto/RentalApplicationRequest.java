@@ -1,6 +1,7 @@
 package com.example.moyeorak.dto;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -27,11 +28,11 @@ public class RentalApplicationRequest {
     @NotNull(message = "종료 시간은 필수입니다.")
     private LocalTime requestedEndTime;
 
-    @NotNull(message = "신청 사유를 입력해주세요.")
+    @NotBlank(message = "신청 사유를 입력해주세요.") // ✅ 공백 문자열 방지
     @Size(min = 1, max = 500, message = "신청 사유는 1자 이상 500자 이하로 입력해야 합니다.")
     private String note;
 
-    @NotNull(message = "신청 인원을 입력해주세요.")
+    @NotNull(message = "신청 인원은 필수입니다.")
     @Min(value = 1, message = "신청 인원은 최소 1명 이상이어야 합니다.")
     private Integer peopleCount;
 }
