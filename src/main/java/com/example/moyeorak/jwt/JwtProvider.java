@@ -14,13 +14,13 @@ import java.util.Date;
 public class JwtProvider {
 
     @Value("${jwt.secret}")
-    private String secret; // application.properties 또는 application.yml에서 불러옴
+    private String secret; // application.properties에서 로드
 
     private Key secretKey;
 
     @PostConstruct
     public void init() {
-        // Base64 또는 일반 문자열 모두 지원 (아래는 일반 문자열로 가정)
+        // 시크릿 키를 UTF-8 인코딩 후 Key 객체로 변환
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -31,7 +31,7 @@ public class JwtProvider {
 
         return Jwts.builder()
                 .setSubject(email)
-                .claim("roles", role)  // roles 클레임 추가
+                .claim("roles", role) // roles 클레임 추가
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(secretKey, SignatureAlgorithm.HS256)
