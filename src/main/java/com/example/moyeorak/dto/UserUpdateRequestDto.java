@@ -20,5 +20,7 @@ public class UserUpdateRequestDto {
     private User.Gender gender;
 
     private String confirmPassword;
+
+    private String regionName;
 }
 

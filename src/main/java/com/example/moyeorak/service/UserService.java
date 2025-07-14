@@ -117,6 +117,16 @@ public class UserService {
             user.setGender(dto.getGender());
         }
 
+        // ✅ 지역 이름으로 지역 변경 처리
+        if (dto.getRegionName() != null) {
+            Region region = regionRepository.findByName(dto.getRegionName())
+                    .orElseThrow(() -> new IllegalArgumentException("선택한 지역이 존재하지 않습니다."));
+
+            if (user.getRegion() == null || !user.getRegion().getId().equals(region.getId())) {
+                user.setRegion(region);
+            }
+        }
+
         return UserResponseDto.fromEntity(user);
     }
 
