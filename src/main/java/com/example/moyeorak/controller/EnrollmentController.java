@@ -4,6 +4,7 @@ import com.example.moyeorak.dto.EnrollmentCancelRequest;
 import com.example.moyeorak.dto.EnrollmentRequest;
 import com.example.moyeorak.dto.EnrollmentResponse;
 import com.example.moyeorak.dto.MessageResponse;
+import com.example.moyeorak.security.CustomUserDetails;
 import com.example.moyeorak.service.EnrollmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +28,14 @@ public class EnrollmentController {
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<EnrollmentResponse> enroll(
-            @AuthenticationPrincipal(expression = "email") String email,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @Valid @RequestBody EnrollmentRequest request
     ) {
+        String email = userDetails.getEmail();
         log.info("[POST] 수강 신청 요청 by {}", email);
         return ResponseEntity.ok(enrollmentService.enrollByEmail(email, request));
     }
+
 
     // 내 수강 목록 조회
     @GetMapping("/me")
