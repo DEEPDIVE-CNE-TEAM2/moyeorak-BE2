@@ -23,4 +23,6 @@ public class EnrollmentResponse {
     private LocalTime classStartTime;
     private LocalTime classEndTime;
     private String instructorName;
+    private String regionLabel;  // ✅ "관내" or "관외"
 }
+
