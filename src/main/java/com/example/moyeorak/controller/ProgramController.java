@@ -1,6 +1,7 @@
 package com.example.moyeorak.controller;
 
 import com.example.moyeorak.dto.*;
+import com.example.moyeorak.security.CustomUserDetails;
 import com.example.moyeorak.service.ProgramService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,8 +36,9 @@ public class ProgramController {
     @GetMapping
     public ResponseEntity<List<ProgramDisplayResponse>> getPrograms(
             @RequestParam(value = "regionId", required = false) Long regionId,
-            @AuthenticationPrincipal(expression = "id") Long userId
+            @AuthenticationPrincipal CustomUserDetails user
     ) {
+        Long userId = user.getId();
         log.info("[GET] 전체 또는 지역별 프로그램 목록 조회 - regionId: {}, userId: {}", regionId, userId);
         if (regionId != null) {
             return ResponseEntity.ok(programService.getProgramsByRegion(regionId, userId));
@@ -49,8 +51,9 @@ public class ProgramController {
     @GetMapping("/{id}")
     public ResponseEntity<ProgramDisplayResponse> getProgramById(
             @PathVariable Long id,
-            @AuthenticationPrincipal(expression = "id") Long userId
+            @AuthenticationPrincipal CustomUserDetails user
     ) {
+        Long userId = user.getId();
         log.info("[GET] 프로그램 상세 조회 - id: {}, userId: {}", id, userId);
         return ResponseEntity.ok(programService.getProgramById(id, userId));
     }
