@@ -1,5 +1,6 @@
 package com.example.moyeorak.jwt;
 
+import com.example.moyeorak.repository.UserRepository;
 import com.example.moyeorak.security.CustomUserDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,6 +23,7 @@ import java.util.List;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -34,25 +36,25 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             if (jwtProvider.validateToken(token)) {
                 String email = jwtProvider.getEmail(token);
-                String role = jwtProvider.getRole(token); // 🔥 토큰에서 roles 클레임 추출
+                String role = jwtProvider.getRole(token);
 
-                if (SecurityContextHolder.getContext().getAuthentication() == null) {
-                    String authority = "ROLE_" + role.toUpperCase(); // Spring Security는 ROLE_ 접두어 필요
+                var user = userRepository.findByEmail(email).orElse(null);
+
+                if (user != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                    String authority = "ROLE_" + user.getRole().name().toUpperCase();
                     var authorities = List.of(new SimpleGrantedAuthority(authority));
 
-                    // 사용자 정보 객체 생성
                     var userDetails = new CustomUserDetails(
-                            null,  // 사용자 ID는 DB 조회를 하지 않기 때문에 null로 처리
-                            email,
-                            role,
+                            user.getId(),
+                            user.getEmail(),
+                            user.getPassword(), // 🔐 비밀번호 포함
                             authorities
                     );
 
-                    // 인증 객체 생성 후 등록
                     var auth = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
                     SecurityContextHolder.getContext().setAuthentication(auth);
 
-                    log.debug("✅ JWT 인증 성공 - 사용자: {}, 권한: {}", email, role);
+                    log.debug("✅ JWT 인증 성공 - 사용자: {}, 권한: {}", email, authority);
                 }
             } else {
                 log.warn("❌ 유효하지 않은 JWT 토큰: {}", token);
