@@ -5,13 +5,16 @@ import com.example.moyeorak.dto.EnrollmentResponse;
 import com.example.moyeorak.entity.Enrollment;
 import com.example.moyeorak.entity.Program;
 import com.example.moyeorak.entity.User;
-import com.example.moyeorak.repository.*;
+import com.example.moyeorak.repository.EnrollmentRepository;
+import com.example.moyeorak.repository.ProgramRepository;
+import com.example.moyeorak.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Slf4j
@@ -28,16 +31,37 @@ public class EnrollmentService {
     public EnrollmentResponse enrollByEmail(String email, EnrollmentRequest request) {
         log.info("[ENROLL] 수강 신청 요청 by {}", email);
 
+        // 사용자 조회
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("사용자 정보가 없습니다."));
 
-        Program program = programRepository.findById(request.getProgramId())
-                .orElseThrow(() -> new IllegalArgumentException("프로그램 정보를 찾을 수 없습니다."));
+        // usagePeriod: "2025-08-01 ~ 2025-08-31"
+        String[] dateParts = request.getUsagePeriod().split(" ~ ");
+        // usageTime: "09:00 ~ 11:00"
+        String[] timeParts = request.getUsageTime().split(" ~ ");
 
+        LocalDate usageStartDate = LocalDate.parse(dateParts[0].trim());
+        LocalDate usageEndDate = LocalDate.parse(dateParts[1].trim());
+        LocalTime classStartTime = LocalTime.parse(timeParts[0].trim());
+        LocalTime classEndTime = LocalTime.parse(timeParts[1].trim());
+
+        // 프로그램 조회
+        Program program = programRepository
+                .findByTitleAndFacility_LocationAndUsageStartDateAndUsageEndDateAndClassStartTimeAndClassEndTime(
+                        request.getProgramTitle(),
+                        request.getPlace(),
+                        usageStartDate,
+                        usageEndDate,
+                        classStartTime,
+                        classEndTime
+                ).orElseThrow(() -> new IllegalArgumentException("프로그램 정보를 찾을 수 없습니다."));
+
+        // 중복 신청 확인
         if (enrollmentRepository.existsByUserIdAndProgramId(user.getId(), program.getId())) {
             throw new IllegalArgumentException("이미 신청한 프로그램입니다.");
         }
 
+        // 수강 신청 생성
         Enrollment enrollment = Enrollment.builder()
                 .user(user)
                 .program(program)
@@ -112,7 +136,7 @@ public class EnrollmentService {
                 .status(e.getStatus().name().toLowerCase())
                 .paidAmount(e.getPaidAmount())
                 .cancelReason(e.getCancelReason())
-                .classStartTime(e.getProgram().getClassStartTime())  // 시간은 Program에서 직접 가져옴
+                .classStartTime(e.getProgram().getClassStartTime())
                 .classEndTime(e.getProgram().getClassEndTime())
                 .build();
     }

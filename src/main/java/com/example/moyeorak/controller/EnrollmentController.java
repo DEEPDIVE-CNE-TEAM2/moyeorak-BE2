@@ -24,7 +24,7 @@ public class EnrollmentController {
 
     private final EnrollmentService enrollmentService;
 
-    // 수강 신청
+    // ✅ 수강 신청
     @PostMapping
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<EnrollmentResponse> enroll(
@@ -36,8 +36,7 @@ public class EnrollmentController {
         return ResponseEntity.ok(enrollmentService.enrollByEmail(email, request));
     }
 
-
-    // 내 수강 목록 조회
+    // ✅ 내 수강 목록 조회
     @GetMapping("/me")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<EnrollmentResponse>> getMyEnrollments(
@@ -47,7 +46,7 @@ public class EnrollmentController {
         return ResponseEntity.ok(enrollmentService.getMyEnrollments(userId));
     }
 
-    // 사용자 수강 취소
+    // ✅ 사용자 수강 취소
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<MessageResponse> cancelEnrollmentByUser(
@@ -59,7 +58,7 @@ public class EnrollmentController {
         return ResponseEntity.ok(new MessageResponse("수강 신청이 취소되었습니다."));
     }
 
-    // 관리자 수강 취소
+    // ✅ 관리자 수강 취소
     @PutMapping("/{id}/cancel")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MessageResponse> cancelEnrollmentByAdmin(
@@ -71,7 +70,7 @@ public class EnrollmentController {
         return ResponseEntity.ok(new MessageResponse("수강 신청이 관리자에 의해 취소되었습니다."));
     }
 
-    // 전체 수강 목록 조회 (ADMIN)
+    // ✅ 전체 수강 목록 조회 (ADMIN)
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<EnrollmentResponse>> getAllEnrollments() {
@@ -79,7 +78,7 @@ public class EnrollmentController {
         return ResponseEntity.ok(enrollmentService.getAllEnrollments());
     }
 
-    // 특정 프로그램 수강자 목록 조회 (ADMIN)
+    // ✅ 특정 프로그램 수강자 목록 조회 (ADMIN)
     @GetMapping("/program/{programId}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<EnrollmentResponse>> getByProgram(@PathVariable Long programId) {
