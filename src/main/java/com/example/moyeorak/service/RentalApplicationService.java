@@ -45,7 +45,6 @@ public class RentalApplicationService {
                 .requestedDate(request.getRequestedDate())
                 .requestedStartTime(request.getRequestedStartTime())
                 .requestedEndTime(request.getRequestedEndTime())
-                .note(request.getNote())
                 .peopleCount(request.getPeopleCount()) // ✅ 인원 수 저장
                 .status(RentalApplicationStatus.PENDING)
                 .build();
