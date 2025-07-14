@@ -21,7 +21,7 @@ public class EnrollmentRequest {
     private String usagePeriod;
 
     @NotBlank(message = "수업 시간은 필수입니다. 예: '09:00 ~ 11:00'")
-    private String usageTime;
+    private String classTime;
 
     @NotNull(message = "수강료는 필수입니다.")
     private Integer paidAmount;

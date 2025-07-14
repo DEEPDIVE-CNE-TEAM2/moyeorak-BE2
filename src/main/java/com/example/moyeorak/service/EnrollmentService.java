@@ -37,7 +37,7 @@ public class EnrollmentService {
 
         // 기간, 시간 파싱
         String[] dateParts = request.getUsagePeriod().split(" ~ ");
-        String[] timeParts = request.getUsageTime().split(" ~ ");
+        String[] timeParts = request.getClassTime().split(" ~ ");  // ✅ 변경된 부분
 
         if (dateParts.length != 2 || timeParts.length != 2) {
             throw new IllegalArgumentException("기간 또는 시간이 올바르지 않습니다.");
