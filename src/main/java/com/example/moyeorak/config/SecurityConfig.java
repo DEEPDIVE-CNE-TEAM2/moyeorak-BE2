@@ -36,7 +36,6 @@ public class SecurityConfig {
                                 "/api/rentals/region/**",
                                 "/api/rentals/facilities/region/**",
                                 "/api/programs", "/api/programs/{id}",
-                                "/api/enrollments", "/api/enrollments/**",
                                 "/api/main-images/region/**",
                                 "/api/notices/region/**",
                                 "/api/notices/{id}",
