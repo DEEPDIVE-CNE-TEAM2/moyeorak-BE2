@@ -23,4 +23,6 @@ public class RentalApplicationResponse {
     private String status;       // ✅ 추가: 내부 코드 ("approved")
     private String statusLabel;  // ✅ 추가: 한글 라벨 ("승인")
     private Integer peopleCount;
+
+    private LocalDateTime createdAt;
 }

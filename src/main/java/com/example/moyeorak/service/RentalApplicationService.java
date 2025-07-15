@@ -126,7 +126,7 @@ public class RentalApplicationService {
                 .peopleCount(app.getPeopleCount())
                 .status(status.name().toLowerCase())
                 .statusLabel(status.getDisplayName())
-                .requestedTime(String.valueOf(app.getCreatedAt()))
+                .createdAt(app.getCreatedAt())
                 .build();
     }
 
