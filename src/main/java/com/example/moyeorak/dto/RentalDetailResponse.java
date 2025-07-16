@@ -2,6 +2,9 @@ package com.example.moyeorak.dto;
 
 import lombok.*;
 
+import java.time.LocalDate;
+import java.util.*;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,4 +21,5 @@ public class RentalDetailResponse {
     private Integer capacity;
     private String contact;
     private String imageUrl; // ✅ 추가
+    private Map<LocalDate, List<TimeRange>> reservedTimes;
 }

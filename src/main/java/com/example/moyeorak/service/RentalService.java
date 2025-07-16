@@ -3,8 +3,11 @@ package com.example.moyeorak.service;
 import com.example.moyeorak.dto.*;
 import com.example.moyeorak.entity.Region;
 import com.example.moyeorak.entity.Rental;
+import com.example.moyeorak.entity.RentalApplication;
+import com.example.moyeorak.entity.RentalApplicationStatus;
 import com.example.moyeorak.entity.User;
 import com.example.moyeorak.repository.RegionRepository;
+import com.example.moyeorak.repository.RentalApplicationRepository;
 import com.example.moyeorak.repository.RentalRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,9 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -26,8 +28,8 @@ public class RentalService {
 
     private final RentalRepository rentalRepository;
     private final RegionRepository regionRepository;
+    private final RentalApplicationRepository rentalApplicationRepository;
 
-    // ✅ 대관 생성
     @Transactional
     public RentalCreateResponse createRental(RentalRequest request, String adminEmail) {
         Region region = regionRepository.findAll().stream()
@@ -59,7 +61,6 @@ public class RentalService {
         return mapToCreateResponse(rentalRepository.save(rental));
     }
 
-    // ✅ 대관 부분 수정
     @Transactional
     public RentalCreateResponse partialUpdateRental(Long id, Map<String, Object> updates) {
         Rental rental = rentalRepository.findById(Math.toIntExact(id))
@@ -110,7 +111,6 @@ public class RentalService {
         return mapToCreateResponse(rental);
     }
 
-    // ✅ 대관 삭제
     @Transactional
     public void deleteRental(Long id) {
         if (!rentalRepository.existsById(Math.toIntExact(id))) {
@@ -119,7 +119,6 @@ public class RentalService {
         rentalRepository.deleteById(Math.toIntExact(id));
     }
 
-    // ✅ 관리자 이메일로 대관 조회
     public List<RentalListResponse> getRentalsByManagerEmail(String email) {
         Region region = regionRepository.findAll().stream()
                 .filter(r -> r.getManager() != null && email.equals(r.getManager().getEmail()))
@@ -131,14 +130,12 @@ public class RentalService {
                 .toList();
     }
 
-    // ✅ 지역 ID로 대관 목록 조회
     public List<RentalListResponse> getRentalsByRegion(Long regionId) {
         return rentalRepository.findByRegionId(regionId).stream()
                 .map(this::mapToListResponse)
                 .toList();
     }
 
-    // ✅ 지역 내 대관 상세 조회
     public RentalDetailResponse getRentalDetailInRegion(Long regionId, Long rentalId) {
         Rental rental = rentalRepository.findById(Math.toIntExact(rentalId))
                 .orElseThrow(() -> new IllegalArgumentException("해당 대관 정보가 없습니다."));
@@ -150,14 +147,11 @@ public class RentalService {
         return mapToDetailResponse(rental);
     }
 
-    // ✅ 시설 정보 조회 (지도 등)
     public List<FacilityResponse> getFacilitiesByRegion(Long regionId) {
         return rentalRepository.findByRegionId(regionId).stream()
                 .map(this::mapToFacilityResponse)
                 .toList();
     }
-
-    // ===================== DTO 변환 =====================
 
     private RentalCreateResponse mapToCreateResponse(Rental rental) {
         User manager = rental.getRegion().getManager();
@@ -199,6 +193,18 @@ public class RentalService {
     }
 
     private RentalDetailResponse mapToDetailResponse(Rental rental) {
+        List<RentalApplication> applications = rentalApplicationRepository.findByRentalId(rental.getId());
+
+        Map<LocalDate, List<TimeRange>> reservedTimes = applications.stream()
+                .filter(app -> app.getStatus() == RentalApplicationStatus.APPROVED)
+                .collect(Collectors.groupingBy(
+                        RentalApplication::getRequestedDate,
+                        Collectors.mapping(app -> TimeRange.builder()
+                                .startTime(app.getRequestedStartTime())
+                                .endTime(app.getRequestedEndTime())
+                                .build(), Collectors.toList())
+                ));
+
         return RentalDetailResponse.builder()
                 .id(Math.toIntExact(rental.getId()))
                 .category(rental.getCategory())
@@ -210,6 +216,7 @@ public class RentalService {
                 .capacity(rental.getCapacity())
                 .contact(rental.getContact())
                 .imageUrl(rental.getImageUrl())
+                .reservedTimes(reservedTimes)
                 .build();
     }
 
@@ -224,8 +231,6 @@ public class RentalService {
                 .contact(rental.getContact())
                 .build();
     }
-
-    // ===================== 포맷 유틸 =====================
 
     private String formatTimeRange(LocalTime start, LocalTime end) {
         return start + " ~ " + end;
