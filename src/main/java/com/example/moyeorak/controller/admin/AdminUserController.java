@@ -3,6 +3,7 @@ import com.example.moyeorak.dto.admin.AdminUserDetailResponseDto;
 
 import com.example.moyeorak.dto.admin.AdminUserCreateRequestDto;
 import com.example.moyeorak.dto.admin.AdminUserListResponseDto;
+import com.example.moyeorak.dto.admin.AdminUserUpdateRequestDto;
 import com.example.moyeorak.service.admin.AdminUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -46,5 +47,15 @@ public class AdminUserController {
     ) {
         AdminUserDetailResponseDto userDetail = adminUserService.getUserDetail(userId, request);
         return ResponseEntity.ok(userDetail);
+    }
+
+    // 회원정보수정
+    @PatchMapping("/{userId}")
+    public ResponseEntity<Void> updateUserInfo(
+            @PathVariable Long userId,
+            @RequestBody AdminUserUpdateRequestDto dto
+    ) {
+        adminUserService.updateUserInfo(userId, dto);
+        return ResponseEntity.ok().build();
     }
 }

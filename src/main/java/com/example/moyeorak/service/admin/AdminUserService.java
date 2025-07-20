@@ -3,6 +3,7 @@ package com.example.moyeorak.service.admin;
 import com.example.moyeorak.dto.admin.AdminUserCreateRequestDto;
 import com.example.moyeorak.dto.admin.AdminUserDetailResponseDto;
 import com.example.moyeorak.dto.admin.AdminUserListResponseDto;
+import com.example.moyeorak.dto.admin.AdminUserUpdateRequestDto;
 import com.example.moyeorak.entity.Region;
 import com.example.moyeorak.entity.User;
 import com.example.moyeorak.jwt.JwtProvider;
@@ -152,4 +153,31 @@ public class AdminUserService {
                 .regionName(user.getRegion().getName())
                 .build();
     }
+
+
+    // 회원정보 수정
+    @Transactional
+    public void updateUserInfo(Long userId, AdminUserUpdateRequestDto dto) {
+        // 1. 유저 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+
+        // 2. email 수정
+        if (dto.getEmail() != null) {
+            user.setEmail(dto.getEmail());
+        }
+
+        // 3. phone 수정
+        if (dto.getPhone() != null) {
+            user.setPhone(dto.getPhone());
+        }
+
+        // 4. region 수정
+        if (dto.getRegionId() != null) {
+            Region region = regionRepository.findById(dto.getRegionId())
+                    .orElseThrow(() -> new IllegalArgumentException("해당 지역이 존재하지 않습니다."));
+            user.setRegion(region);
+        }
+    }
+
 }
