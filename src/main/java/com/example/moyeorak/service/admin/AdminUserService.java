@@ -19,7 +19,7 @@ public class AdminUserService {
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
 
-    // ✅ 토큰 기반으로 관리자 식별 + 담당 지역 유저 조회
+    // 토큰 기반으로 관리자 식별 + 담당 지역 유저 조회
     public List<AdminUserListResponseDto> getUsersByRegionFromToken(HttpServletRequest request) {
         // 1. 토큰에서 관리자 이메일 꺼내기
         String token = jwtProvider.resolveToken(request);
@@ -39,8 +39,8 @@ public class AdminUserService {
             throw new IllegalStateException("관리자에게 지역 정보가 설정되어 있지 않습니다.");
         }
 
-        // 4. 해당 지역 유저 조회
-        List<User> users = userRepository.findByRegion(region);
+        // 4. 해당 지역의 일반 유저만 조회 (관리자는 제외)
+        List<User> users = userRepository.findByRegionAndRole(region, User.Role.USER);
 
         // 5. DTO로 변환
         return users.stream()

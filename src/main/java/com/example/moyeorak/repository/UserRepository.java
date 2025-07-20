@@ -11,4 +11,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
     Optional<User> findByPhone(String phone);
     List<User> findByRegion(Region region);
+
+    // 회원조회할때 user만 보이게
+    List<User> findByRegionAndRole(Region region, User.Role role);
 }
