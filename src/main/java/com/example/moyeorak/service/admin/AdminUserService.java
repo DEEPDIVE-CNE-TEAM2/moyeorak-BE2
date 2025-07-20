@@ -1,5 +1,6 @@
 package com.example.moyeorak.service.admin;
 
+import com.example.moyeorak.dto.admin.AdminUserCreateRequestDto;
 import com.example.moyeorak.dto.admin.AdminUserListResponseDto;
 import com.example.moyeorak.entity.Region;
 import com.example.moyeorak.entity.User;
@@ -7,9 +8,12 @@ import com.example.moyeorak.jwt.JwtProvider;
 import com.example.moyeorak.repository.UserRepository;
 import com.example.moyeorak.repository.RegionRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -20,6 +24,7 @@ public class AdminUserService {
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
     private final RegionRepository regionRepository;
+    private final PasswordEncoder passwordEncoder;
 
     // 토큰 기반으로 관리자 식별 + 담당 지역 유저 조회 (키워드 필터링 포함)
     public List<AdminUserListResponseDto> getUsersByRegionAndKeyword(HttpServletRequest request, Long regionId, String keyword) {
@@ -66,5 +71,50 @@ public class AdminUserService {
                         user.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
                 ))
                 .toList();
+    }
+
+
+    // 관리자 지역 기반으로 해당 지역 유저 생성
+    @Transactional
+    public void createUser(AdminUserCreateRequestDto dto, HttpServletRequest request) {
+        // 1. 관리자 인증
+        String token = jwtProvider.resolveToken(request);
+        String email = jwtProvider.getEmail(token);
+
+        User admin = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("관리자 정보가 없습니다."));
+
+        if (admin.getRole() != User.Role.ADMIN) {
+            throw new IllegalAccessError("관리자 권한이 없습니다.");
+        }
+
+        // 2. 관리자 지역 가져오기
+        Region region = admin.getRegion();
+        if (region == null) {
+            throw new IllegalStateException("관리자 지역 정보가 없습니다.");
+        }
+
+        // 3. 유저 생성
+        User newUser = User.builder()
+                .email(dto.getEmail().trim().toLowerCase())
+                .password(passwordEncoder.encode(dto.getPassword()))
+                .name(dto.getName())
+                .gender(parseGender(dto.getGender()))
+                .phone(dto.getPhone())
+                .birth(LocalDate.parse(dto.getBirth())) // "2025-07-20" 형식
+                .role(User.Role.USER)
+                .region(region)
+                .build();
+
+        // 4. 저장
+        userRepository.save(newUser);
+    }
+
+    private User.Gender parseGender(String gender) {
+        return switch (gender.trim()) {
+            case "남" -> User.Gender.MALE;
+            case "여" -> User.Gender.FEMALE;
+            default -> throw new IllegalArgumentException("성별은 '남' 또는 '여'여야 합니다.");
+        };
     }
 }

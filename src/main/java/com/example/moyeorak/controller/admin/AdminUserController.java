@@ -1,13 +1,12 @@
 package com.example.moyeorak.controller.admin;
 
+import com.example.moyeorak.dto.admin.AdminUserCreateRequestDto;
 import com.example.moyeorak.dto.admin.AdminUserListResponseDto;
 import com.example.moyeorak.service.admin.AdminUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,5 +25,15 @@ public class AdminUserController {
             HttpServletRequest request
     ) {
         return adminUserService.getUsersByRegionAndKeyword(request, regionId, keyword);
+    }
+
+    // 유저 생성
+    @PostMapping
+    public ResponseEntity<Void> createUser(
+            @RequestBody AdminUserCreateRequestDto dto,
+            HttpServletRequest request
+    ) {
+        adminUserService.createUser(dto, request);
+        return ResponseEntity.ok().build();
     }
 }
