@@ -1,4 +1,5 @@
 package com.example.moyeorak.controller.admin;
+import com.example.moyeorak.dto.admin.AdminUserDetailResponseDto;
 
 import com.example.moyeorak.dto.admin.AdminUserCreateRequestDto;
 import com.example.moyeorak.dto.admin.AdminUserListResponseDto;
@@ -35,5 +36,15 @@ public class AdminUserController {
     ) {
         adminUserService.createUser(dto, request);
         return ResponseEntity.ok().build();
+    }
+
+    // 회원 상세 정보 조회
+    @GetMapping("/{userId}")
+    public ResponseEntity<AdminUserDetailResponseDto> getUserDetail(
+            @PathVariable Long userId,
+            HttpServletRequest request
+    ) {
+        AdminUserDetailResponseDto userDetail = adminUserService.getUserDetail(userId, request);
+        return ResponseEntity.ok(userDetail);
     }
 }

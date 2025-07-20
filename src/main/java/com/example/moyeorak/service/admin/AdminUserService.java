@@ -1,6 +1,7 @@
 package com.example.moyeorak.service.admin;
 
 import com.example.moyeorak.dto.admin.AdminUserCreateRequestDto;
+import com.example.moyeorak.dto.admin.AdminUserDetailResponseDto;
 import com.example.moyeorak.dto.admin.AdminUserListResponseDto;
 import com.example.moyeorak.entity.Region;
 import com.example.moyeorak.entity.User;
@@ -116,5 +117,39 @@ public class AdminUserService {
             case "여" -> User.Gender.FEMALE;
             default -> throw new IllegalArgumentException("성별은 '남' 또는 '여'여야 합니다.");
         };
+    }
+
+    // 회원 상세정보 응답
+    public AdminUserDetailResponseDto getUserDetail(Long userId, HttpServletRequest request) {
+        // 1. 관리자 인증
+        String token = jwtProvider.resolveToken(request);
+        String email = jwtProvider.getEmail(token);
+
+        User admin = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("관리자 정보가 없습니다."));
+        if (admin.getRole() != User.Role.ADMIN) {
+            throw new IllegalAccessError("관리자 권한이 없습니다.");
+        }
+
+        // 2. 유저 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
+
+        // 3. 유저가 관리자 담당 지역 유저인지 검증
+        if (!user.getRegion().getId().equals(admin.getRegion().getId())) {
+            throw new IllegalAccessError("관리자 담당 지역 유저가 아닙니다.");
+        }
+
+        // 4. 응답 DTO 구성
+        return AdminUserDetailResponseDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .gender(user.getGender() == User.Gender.MALE ? "남" : "여")
+                .createdAt(user.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")))
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .regionId(user.getRegion().getId())
+                .regionName(user.getRegion().getName())
+                .build();
     }
 }
