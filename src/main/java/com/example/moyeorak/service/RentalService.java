@@ -210,7 +210,7 @@ public class RentalService {
                 .id(Math.toIntExact(facility.getId()))
                 .location(facility.getLocation())
                 .address(facility.getAddress())
-                .area(facility.getArea())
+                .capacity(facility.getCapacity())
                 .usageTime(formatTimeRange(facility.getUsageStartTime(), facility.getUsageEndTime()))
                 .imageUrl(facility.getImageUrl())
                 .contact(facility.getContact())
