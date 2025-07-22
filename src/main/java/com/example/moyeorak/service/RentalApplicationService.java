@@ -29,7 +29,7 @@ public class RentalApplicationService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다."));
 
-        Rental rental = rentalRepository.findById(request.getRentalId())
+        Rental rental = rentalRepository.findById(Long.valueOf(request.getRentalId()))
                 .orElseThrow(() -> new IllegalArgumentException("대관 공간이 존재하지 않습니다."));
 
         if (request.getPeopleCount() > rental.getCapacity()) {
@@ -118,8 +118,8 @@ public class RentalApplicationService {
 
         return RentalApplicationResponse.builder()
                 .id(app.getId())
-                .location(rental.getLocation())
-                .address(rental.getAddress())
+                .location(rental.getFacility().getLocation())
+                .address(rental.getFacility().getAddress())
                 .requestedDate(app.getRequestedDate())
                 .requestedTime(app.getRequestedStartTime() + " ~ " + app.getRequestedEndTime())
                 .capacity(rental.getCapacity())
@@ -136,7 +136,7 @@ public class RentalApplicationService {
         return RentalApplicationAdminResponse.builder()
                 .id(app.getId())
                 .regionName(app.getRegion().getName())
-                .location(app.getRental().getLocation())
+                .location(app.getRental().getFacility().getLocation())
                 .requestedDate(app.getRequestedDate().toString())
                 .requestedTime(app.getRequestedStartTime() + " ~ " + app.getRequestedEndTime())
                 .applicantName(app.getUser().getName())

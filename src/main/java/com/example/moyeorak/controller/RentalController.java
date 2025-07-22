@@ -41,7 +41,6 @@ public class RentalController {
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    // ✅ 관리자 담당 지역의 대관 목록만 조회
     @GetMapping("/admin/list")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<RentalListResponse>> getRentalsByAdmin(HttpServletRequest request) {
@@ -56,14 +55,12 @@ public class RentalController {
         return ResponseEntity.ok(rentalService.getRentalsByManagerEmail(email));
     }
 
-    // ✅ 지역별 대관 목록 조회 (사용자용)
     @GetMapping("/region/{regionId}")
     public ResponseEntity<List<RentalListResponse>> getRentalsByRegion(@PathVariable Long regionId) {
         log.info("[GET] 지역별 대관 조회 요청 - Region ID: {}", regionId);
         return ResponseEntity.ok(rentalService.getRentalsByRegion(regionId));
     }
 
-    // ✅ 지역별 대관 상세 조회
     @GetMapping("/region/{regionId}/{rentalId}")
     public ResponseEntity<RentalDetailResponse> getRentalDetailByRegion(
             @PathVariable Long regionId,
@@ -95,7 +92,6 @@ public class RentalController {
         return ResponseEntity.ok(new MessageResponse("삭제되었습니다."));
     }
 
-    // ✅ 지역별 시설 목록 조회 (면적 포함)
     @GetMapping("/facilities/region/{regionId}")
     public ResponseEntity<List<FacilityResponse>> getFacilitiesByRegion(@PathVariable Long regionId) {
         log.info("[GET] 지역별 시설 조회 요청 - Region ID: {}", regionId);

@@ -14,12 +14,20 @@ public class RentalCreateResponse {
 
     private Integer id;
 
-    private String category;
+    // Facility 정보
+    private Long facilityId;               // ✅ 시설 ID
+    private String facilityName;
     private String location;
+    private String address;
+    private String contact;                // ✅ 시설 연락처
+    private String description;            // ✅ 시설 설명
     private String imageUrl;
-    private String description;
-    private String target;
+    private Integer area;
+    private Integer capacity;              // ✅ 시설 최대 수용 인원
+    private LocalTime facilityUsageStartTime;  // ✅ 시설 운영 시작 시간
+    private LocalTime facilityUsageEndTime;    // ✅ 시설 운영 종료 시간
 
+    // Rental 정보
     private LocalDate usageStartDate;
     private LocalDate usageEndDate;
     private LocalTime usageStartTime;
@@ -29,15 +37,8 @@ public class RentalCreateResponse {
     private LocalDate registrationEndDate;
     private LocalDate cancelEndDate;
 
-    private Integer fee;
-    private Integer capacity;
-    private Integer area; // ✅ 여기에 추가
-
-    private String contact;
-    private String address;
-
+    // Region 관리자 정보
     private String regionName;
     private String managerName;
     private String managerEmail;
 }
-

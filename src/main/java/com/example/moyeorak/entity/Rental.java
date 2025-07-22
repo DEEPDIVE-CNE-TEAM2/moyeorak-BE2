@@ -17,62 +17,52 @@ public class Rental {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;  // Integer → Long 으로 수정
+    private Long id;
 
+    // ✅ 참조된 시설
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "facility_id", nullable = false)
+    private Facility facility;
+
+    // ✅ 해당 대관이 속한 지역
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id", nullable = false)
     private Region region;
 
+    // ✅ 대관 신청 분류 (ex. 체육, 예술 등)
     @Column(length = 50, nullable = false)
     private String category;
 
-    @Column(length = 255, nullable = false)
-    private String location;
-
-    @Column(length = 255, nullable = false)
-    private String imageUrl;
-
-    @Lob
-    @Column(nullable = false)
-    private String description;
-
+    // ✅ 대관 대상 (ex. 아동, 성인 등)
     @Column(length = 50, nullable = false)
     private String target;
 
+    // ✅ 대관 가능 기간
     @Column(nullable = false)
     private LocalDate usageStartDate;
 
     @Column(nullable = false)
     private LocalDate usageEndDate;
 
+    // ✅ 대관 가능 시간
     @Column(nullable = false)
     private LocalTime usageStartTime;
 
     @Column(nullable = false)
     private LocalTime usageEndTime;
 
+    // ✅ 대관 신청 가능한 기간
     @Column(nullable = false)
     private LocalDate registrationStartDate;
 
     @Column(nullable = false)
     private LocalDate registrationEndDate;
 
+    // ✅ 대관 취소 가능 마감일
     @Column(nullable = false)
     private LocalDate cancelEndDate;
 
-    @Column(nullable = false)
-    private Integer fee;
-
+    // ✅ 신청 시 최대 인원
     @Column(nullable = false)
     private Integer capacity;
-
-    @Column(length = 50, nullable = false)
-    private String contact;
-
-    @Column(length = 255, nullable = false)
-    private String address;
-
-    @Column(nullable = true)
-    private Integer area;
-
 }

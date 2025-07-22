@@ -4,15 +4,15 @@ import lombok.*;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class FacilityResponse {
-    private Integer id;
+public class FacilitySimpleDto {
+    private Long id;
     private String location;
     private String address;
-    private Integer area;
     private String usageTime;
+    private Integer capacity;
     private String imageUrl;
-    private String contact;
 }
+

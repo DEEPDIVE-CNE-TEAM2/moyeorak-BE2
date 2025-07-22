@@ -13,17 +13,12 @@ import java.time.LocalTime;
 @Builder
 public class RentalRequest {
 
+    @NotNull
+    private Long facilityId;
+
     @NotBlank
     @Size(max = 50)
     private String category;
-
-    @NotBlank
-    @Size(max = 255)
-    private String location;
-
-    private String imageUrl;
-
-    private String description;
 
     @NotBlank
     @Size(max = 50)
@@ -51,21 +46,6 @@ public class RentalRequest {
     private LocalDate cancelEndDate;
 
     @NotNull
-    @Min(0)
-    private Integer fee;
-
-    @NotNull
     @Min(1)
     private Integer capacity;
-
-    @NotBlank
-    @Size(max = 50)
-    private String contact;
-
-    @NotBlank
-    @Size(max = 255)
-    private String address;
-
-    @Min(0)
-    private Integer area;
 }

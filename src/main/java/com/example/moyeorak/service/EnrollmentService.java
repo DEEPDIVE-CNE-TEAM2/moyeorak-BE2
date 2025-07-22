@@ -28,7 +28,6 @@ public class EnrollmentService {
     private final UserRepository userRepository;
     private final ProgramRepository programRepository;
 
-    // ✅ 수강 신청
     @Transactional
     public EnrollmentResponse enrollByEmail(String email, EnrollmentRequest request) {
         log.info("[ENROLL] 수강 신청 요청 by {}", email);
@@ -49,7 +48,7 @@ public class EnrollmentService {
         LocalTime classEndTime = LocalTime.parse(timeParts[1].trim());
 
         Program program = programRepository
-                .findByTitleAndFacility_LocationAndUsageStartDateAndUsageEndDateAndClassStartTimeAndClassEndTime(
+                .findByTitleAndFacility_NameAndUsageStartDateAndUsageEndDateAndClassStartTimeAndClassEndTime(
                         request.getProgramTitle(),
                         request.getLocation(),
                         usageStartDate,
@@ -75,7 +74,6 @@ public class EnrollmentService {
                 .classEndTime(program.getClassEndTime())
                 .build();
 
-        // ✅ 저장 후 반환
         Enrollment saved = enrollmentRepository.save(enrollment);
         return toResponse(saved, user);
     }
@@ -136,7 +134,6 @@ public class EnrollmentService {
                 .orElseThrow(() -> new IllegalArgumentException("수강 신청이 존재하지 않습니다."));
     }
 
-    // ✅ 관내 여부 판단용 헬퍼
     private boolean isInRegion(User user, Program program) {
         Long userRegionId = Optional.ofNullable(user.getRegion()).map(r -> r.getId()).orElse(null);
         Long programRegionId = Optional.ofNullable(program.getRegion()).map(r -> r.getId()).orElse(null);
@@ -147,7 +144,6 @@ public class EnrollmentService {
         return inRegion;
     }
 
-    // ✅ 사용자 포함된 Enrollment → DTO 변환
     private EnrollmentResponse toResponse(Enrollment e, User user) {
         Program program = e.getProgram();
         boolean inRegion = isInRegion(user, program);

@@ -11,15 +11,21 @@ import java.util.*;
 @AllArgsConstructor
 @Builder
 public class RentalDetailResponse {
+
     private Integer id;
-    private String category;
+
+    // 시설 정보
     private String location;
     private String address;
+    private String imageUrl;
+
+    // 대관 정보
     private String usageTime;
     private String registrationPeriod;
     private String cancelEndDate;
     private Integer capacity;
     private String contact;
-    private String imageUrl; // ✅ 추가
+
+    // 예약 현황
     private Map<LocalDate, List<TimeRange>> reservedTimes;
 }

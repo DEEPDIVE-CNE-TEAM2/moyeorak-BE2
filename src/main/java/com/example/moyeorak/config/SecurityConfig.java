@@ -38,6 +38,8 @@ public class SecurityConfig {
                                 "/api/rentals/region/**",
                                 "/api/rentals/facilities/region/**",
                                 "/api/programs", "/api/programs/{id}",
+                                "/api/facilities/{id:[\\d]+}",
+                                "/api/facilities/region/{regionId:[\\d]+}",
                                 "/api/main-images/region/**",
                                 "/api/notices/region/**",
                                 "/api/notices/{id}",

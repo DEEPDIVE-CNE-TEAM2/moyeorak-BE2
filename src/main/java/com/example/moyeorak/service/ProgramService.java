@@ -73,7 +73,7 @@ public class ProgramService {
             try {
                 switch (fieldName) {
                     case "regionId" -> program.setRegion(getRegion(Long.parseLong(value.toString())));
-                    case "facilityId" -> program.setFacility(getFacility(Long.parseLong(value.toString())));
+                    case "facilityId" -> program.setFacility(getFacility(Long.parseLong(value.toString())).getFacility());
                     case "status" -> program.setStatus(
                             "closed".equalsIgnoreCase(value.toString()) ? Program.Status.CLOSED : Program.Status.OPEN);
                     case "usageStartDate", "usageEndDate",
@@ -135,7 +135,7 @@ public class ProgramService {
     }
 
     private Rental getFacility(Long facilityId) {
-        return rentalRepository.findById(Math.toIntExact(facilityId))
+        return rentalRepository.findById((long) Math.toIntExact(facilityId))
                 .orElseThrow(() -> new IllegalArgumentException("시설(ID: " + facilityId + ")이 존재하지 않습니다."));
     }
 
@@ -149,7 +149,7 @@ public class ProgramService {
         return Program.builder()
                 .title(dto.getTitle())
                 .region(getRegion(dto.getRegionId()))
-                .facility(getFacility(dto.getFacilityId()))
+                .facility(getFacility(dto.getFacilityId()).getFacility())
                 .category(dto.getCategory())
                 .target(dto.getTarget())
                 .instructorName(dto.getInstructorName())
