@@ -63,6 +63,7 @@ public class FacilityService {
                         .usageTime(formatUsageTime(facility))
                         .capacity(facility.getCapacity())
                         .imageUrl(facility.getImageUrl())
+                        .area(facility.getArea())
                         .build())
                 .collect(Collectors.toList());
     }

@@ -14,5 +14,6 @@ public class FacilitySimpleDto {
     private String usageTime;
     private Integer capacity;
     private String imageUrl;
+    private Integer area;
 }
 
