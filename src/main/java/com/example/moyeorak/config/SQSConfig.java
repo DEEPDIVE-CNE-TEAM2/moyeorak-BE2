@@ -4,8 +4,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
-import io.awspring.cloud.messaging.core.SqsTemplate;
+//import io.awspring.cloud.messaging.core.SqsTemplate;
 
 @Configuration
 public class SQSConfig {
@@ -22,9 +23,9 @@ public class SQSConfig {
     }
 
     // SQS 템플릿
-    @Bean
-    public SqsTemplate sqsTemplate(SqsAsyncClient sqsAsyncClient) {
-        return SqsTemplate.newTemplate(sqsAsyncClient);
-    }
+    //@Bean
+    //public SqsTemplate sqsTemplate(SqsAsyncClient sqsAsyncClient) {
+    //    return SqsTemplate.newTemplate(sqsAsyncClient);
+    //}
 
 }

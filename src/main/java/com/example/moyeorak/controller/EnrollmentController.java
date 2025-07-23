@@ -6,6 +6,7 @@ import com.example.moyeorak.dto.EnrollmentResponse;
 import com.example.moyeorak.dto.MessageResponse;
 import com.example.moyeorak.security.CustomUserDetails;
 import com.example.moyeorak.service.EnrollmentService;
+import com.example.moyeorak.service.AsyncEnrollmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import java.util.List;
 public class EnrollmentController {
 
     private final EnrollmentService enrollmentService;
+    private final AsyncEnrollmentService asyncEnrollmentService;
 
     // ✅ 수강 신청
     @PostMapping
@@ -85,4 +87,19 @@ public class EnrollmentController {
         log.info("[ADMIN] 특정 프로그램 수강자 목록 조회 - programId: {}", programId);
         return ResponseEntity.ok(enrollmentService.getEnrollmentsByProgram(programId));
     }
+
+    @PostMapping("/async")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<MessageResponse> asyncEnrollment(
+            @Valid @RequestBody EnrollmentRequest request,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        String email = userDetails.getEmail();
+        log.info("[ASYNC POST] 수강 신청 요청 비동기 처리 by {}", email);
+
+        asyncEnrollmentService.sendEnrollment(request, email);
+
+        return ResponseEntity.accepted().body(new MessageResponse("수강 신청 요청이 접수되었습니다."));
+    }
+
 }
