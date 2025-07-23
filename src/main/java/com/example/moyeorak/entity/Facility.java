@@ -19,7 +19,7 @@ public class Facility {
     private Long id;
 
     @Column(length = 100, nullable = false, unique = true)
-    private String name; // 예: 수영장, 체육관, 회의실 등
+    private String name;
 
     @Column(length = 100, nullable = false)
     private String location;
