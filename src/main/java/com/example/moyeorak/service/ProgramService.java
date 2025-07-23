@@ -21,7 +21,7 @@ public class ProgramService {
 
     private final ProgramRepository programRepository;
     private final RegionRepository regionRepository;
-    private final RentalRepository rentalRepository;
+    private final FacilityRepository facilityRepository;
     private final UserRepository userRepository;
 
     @Transactional
@@ -73,7 +73,7 @@ public class ProgramService {
             try {
                 switch (fieldName) {
                     case "regionId" -> program.setRegion(getRegion(Long.parseLong(value.toString())));
-                    case "facilityId" -> program.setFacility(getFacility(Long.parseLong(value.toString())).getFacility());
+                    case "facilityId" -> program.setFacility(getFacility(Long.parseLong(value.toString())));
                     case "status" -> program.setStatus(
                             "closed".equalsIgnoreCase(value.toString()) ? Program.Status.CLOSED : Program.Status.OPEN);
                     case "usageStartDate", "usageEndDate",
@@ -134,8 +134,8 @@ public class ProgramService {
                 .orElseThrow(() -> new IllegalArgumentException("지역(ID: " + regionId + ")이 존재하지 않습니다."));
     }
 
-    private Rental getFacility(Long facilityId) {
-        return rentalRepository.findById((long) Math.toIntExact(facilityId))
+    private Facility getFacility(Long facilityId) {
+        return facilityRepository.findById(facilityId)
                 .orElseThrow(() -> new IllegalArgumentException("시설(ID: " + facilityId + ")이 존재하지 않습니다."));
     }
 
@@ -149,7 +149,7 @@ public class ProgramService {
         return Program.builder()
                 .title(dto.getTitle())
                 .region(getRegion(dto.getRegionId()))
-                .facility(getFacility(dto.getFacilityId()).getFacility())
+                .facility(getFacility(dto.getFacilityId()))
                 .category(dto.getCategory())
                 .target(dto.getTarget())
                 .instructorName(dto.getInstructorName())
