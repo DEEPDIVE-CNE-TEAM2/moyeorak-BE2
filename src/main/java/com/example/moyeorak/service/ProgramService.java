@@ -163,7 +163,7 @@ public class ProgramService {
 
         LocalDateTime now = LocalDateTime.now(KST);
         LocalDateTime start = registrationDate.atTime(9, 0);
-        LocalDateTime end = registrationDate.atTime(12, 0);
+        LocalDateTime end = registrationDate.atTime(10, 0);
 
         boolean result = now.isAfter(start) && now.isBefore(end);
         log.info("[isAsyncPeriod] programId={}, now={}, start={}, end={}, isAsync={}",
