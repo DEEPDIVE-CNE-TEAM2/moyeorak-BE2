@@ -38,19 +38,26 @@ public class EnrollmentService {
         Program program = programRepository.findById(request.getProgramId())
                 .orElseThrow(() -> new IllegalArgumentException("프로그램 정보가 없습니다."));
 
-        // ✅ 중복 수강 신청 체크 및 재신청 허용 로직
         Optional<Enrollment> existing = enrollmentRepository.findByUserIdAndProgramId(user.getId(), program.getId());
+
+        boolean inRegion = isInRegion(user, program);
+        int paidAmount = inRegion ? program.getInPrice() : program.getOutPrice();
 
         if (existing.isPresent()) {
             Enrollment prev = existing.get();
             if (prev.getStatus() != Enrollment.Status.CANCELLED) {
                 throw new IllegalArgumentException("이미 신청한 프로그램입니다.");
             }
-            enrollmentRepository.delete(prev); // ✅ 취소된 신청이면 삭제 후 진행
-        }
 
-        boolean inRegion = isInRegion(user, program);
-        int paidAmount = inRegion ? program.getInPrice() : program.getOutPrice();
+            // ✅ 삭제 대신 재활용 방식
+            prev.setStatus(Enrollment.Status.ENROLLED);
+            prev.setPaidAmount(paidAmount);
+            prev.setClassStartTime(program.getClassStartTime());
+            prev.setClassEndTime(program.getClassEndTime());
+            prev.setRegion(program.getRegion());
+            prev.setCancelReason(null); // 취소 사유 초기화
+            return toResponse(enrollmentRepository.save(prev), user);
+        }
 
         Enrollment enrollment = Enrollment.builder()
                 .user(user)
