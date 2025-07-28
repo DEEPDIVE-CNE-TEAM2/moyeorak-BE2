@@ -1,5 +1,6 @@
 package com.example.moyeorak.controller.admin;
 
+import com.example.moyeorak.dto.MessageResponse;
 import com.example.moyeorak.dto.admin.*;
 import com.example.moyeorak.service.admin.AdminProgramService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -60,5 +61,15 @@ public class AdminProgramController {
     ) {
         Long updatedId = adminProgramService.patchProgram(programId, request, httpRequest);
         return ResponseEntity.ok(updatedId);
+    }
+
+    @DeleteMapping("/{programId}")
+    @Operation(summary = "관리자 프로그램 삭제", description = "programId 기준 삭제")
+    public ResponseEntity<MessageResponse> deleteProgram(
+            @PathVariable Long programId,
+            HttpServletRequest request
+    ) {
+        MessageResponse response = adminProgramService.deleteProgram(programId, request);
+        return ResponseEntity.ok(response);
     }
 }

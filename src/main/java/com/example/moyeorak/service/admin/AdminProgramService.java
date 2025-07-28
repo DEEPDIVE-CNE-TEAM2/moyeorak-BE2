@@ -1,5 +1,6 @@
 package com.example.moyeorak.service.admin;
 
+import com.example.moyeorak.dto.MessageResponse;
 import com.example.moyeorak.dto.admin.AdminProgramCreateRequest;
 import com.example.moyeorak.dto.admin.AdminProgramDetailResponse;
 import com.example.moyeorak.dto.admin.AdminProgramListResponse;
@@ -197,7 +198,18 @@ public class AdminProgramService {
         return program.getId();
     }
 
+    // 프로그램 삭제
+    @Transactional
+    public MessageResponse deleteProgram(Long programId, HttpServletRequest request) {
+        User admin = getAdminFromRequest(request);
 
+        Program program = programRepository.findById(programId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 프로그램이 존재하지 않습니다."));
+
+        programRepository.delete(program);
+
+        return new MessageResponse("프로그램이 삭제되었습니다.");
+    }
 
     // 시간 포매팅
     private String formatTimeRange(LocalTime start, LocalTime end) {
