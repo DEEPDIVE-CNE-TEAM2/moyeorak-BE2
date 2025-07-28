@@ -2,16 +2,24 @@ package com.example.moyeorak.service;
 
 import com.example.moyeorak.dto.EnrollmentRequest;
 import com.example.moyeorak.dto.EnrollmentResponse;
+import com.example.moyeorak.dto.MessageResponse;
 import com.example.moyeorak.entity.Enrollment;
 import com.example.moyeorak.entity.Program;
 import com.example.moyeorak.entity.User;
 import com.example.moyeorak.repository.EnrollmentRepository;
 import com.example.moyeorak.repository.ProgramRepository;
 import com.example.moyeorak.repository.UserRepository;
+import com.example.moyeorak.security.CustomUserDetails;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -148,4 +156,5 @@ public class EnrollmentService {
                 .cancelEndDate(program.getCancelEndDate())
                 .build();
     }
+
 }
