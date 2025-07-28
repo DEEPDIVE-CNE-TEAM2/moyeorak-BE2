@@ -2,7 +2,6 @@ package com.example.moyeorak.service;
 
 import com.example.moyeorak.dto.EnrollmentRequest;
 import com.example.moyeorak.dto.EnrollmentResponse;
-import com.example.moyeorak.dto.MessageResponse;
 import com.example.moyeorak.entity.Enrollment;
 import com.example.moyeorak.entity.Program;
 import com.example.moyeorak.entity.User;
@@ -34,32 +33,33 @@ public class EnrollmentService {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("사용자 정보가 없습니다."));
-
         Program program = programRepository.findById(request.getProgramId())
                 .orElseThrow(() -> new IllegalArgumentException("프로그램 정보가 없습니다."));
-
-        Optional<Enrollment> existing = enrollmentRepository.findByUserIdAndProgramId(user.getId(), program.getId());
 
         boolean inRegion = isInRegion(user, program);
         int paidAmount = inRegion ? program.getInPrice() : program.getOutPrice();
 
-        if (existing.isPresent()) {
-            Enrollment prev = existing.get();
-            if (prev.getStatus() != Enrollment.Status.CANCELLED) {
+        Optional<Enrollment> existingOpt = enrollmentRepository.findByUserIdAndProgramId(user.getId(), program.getId());
+
+        if (existingOpt.isPresent()) {
+            Enrollment existing = existingOpt.get();
+            if (existing.getStatus() != Enrollment.Status.CANCELLED) {
                 throw new IllegalArgumentException("이미 신청한 프로그램입니다.");
             }
 
-            // ✅ 삭제 대신 재활용 방식
-            prev.setStatus(Enrollment.Status.ENROLLED);
-            prev.setPaidAmount(paidAmount);
-            prev.setClassStartTime(program.getClassStartTime());
-            prev.setClassEndTime(program.getClassEndTime());
-            prev.setRegion(program.getRegion());
-            prev.setCancelReason(null); // 취소 사유 초기화
-            return toResponse(enrollmentRepository.save(prev), user);
+            // ✅ 삭제 대신 재사용 방식 (unique 제약 조건 회피 + 기록 유지)
+            existing.setStatus(Enrollment.Status.ENROLLED);
+            existing.setPaidAmount(paidAmount);
+            existing.setClassStartTime(program.getClassStartTime());
+            existing.setClassEndTime(program.getClassEndTime());
+            existing.setRegion(program.getRegion());
+            existing.setCancelReason("");  // 취소 사유 초기화 (nullable 방지)
+
+            Enrollment saved = enrollmentRepository.save(existing);
+            return toResponse(saved, user);
         }
 
-        Enrollment enrollment = Enrollment.builder()
+        Enrollment newEnrollment = Enrollment.builder()
                 .user(user)
                 .program(program)
                 .region(program.getRegion())
@@ -69,7 +69,7 @@ public class EnrollmentService {
                 .classEndTime(program.getClassEndTime())
                 .build();
 
-        Enrollment saved = enrollmentRepository.save(enrollment);
+        Enrollment saved = enrollmentRepository.save(newEnrollment);
         return toResponse(saved, user);
     }
 
@@ -118,7 +118,6 @@ public class EnrollmentService {
     @Transactional
     public void cancelEnrollmentByAdmin(Long id, String reason) {
         log.info("[ADMIN CANCEL] 관리자 수강 취소 요청 - id: {}, reason: {}", id, reason);
-
         Enrollment enrollment = getEnrollment(id);
         enrollment.setStatus(Enrollment.Status.CANCELLED);
         enrollment.setCancelReason(reason);
