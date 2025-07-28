@@ -134,16 +134,36 @@ public class AdminProgramService {
         return AdminProgramDetailResponse.builder()
                 .id(program.getId())
                 .title(program.getTitle())
+
+                // region, facility
+                .regionId(program.getRegion().getId())
                 .regionName(program.getRegion().getName())
+                .facilityId(program.getFacility().getId())
                 .facilityName(program.getFacility().getName())
+
+                // 기본 필드
                 .category(program.getCategory())
                 .target(program.getTarget())
                 .instructorName(program.getInstructorName())
                 .status(program.getStatus().name())
+
+                // 날짜 원본
+                .usageStartDate(program.getUsageStartDate())
+                .usageEndDate(program.getUsageEndDate())
+                .registrationStartDate(program.getRegistrationStartDate())
+                .registrationEndDate(program.getRegistrationEndDate())
+                .cancelEndDate(program.getCancelEndDate())
+
+                // 시간 원본
+                .classStartTime(program.getClassStartTime())
+                .classEndTime(program.getClassEndTime())
+
+                // 상세정보 보기용 포맷
                 .usagePeriod(formatDateRange(program.getUsageStartDate(), program.getUsageEndDate()))
                 .classTime(formatTimeRange(program.getClassStartTime(), program.getClassEndTime()))
                 .registrationPeriod(formatDateRange(program.getRegistrationStartDate(), program.getRegistrationEndDate()))
-                .cancelEndDate(program.getCancelEndDate().toString())
+
+                // 가격/기타
                 .inPrice(program.getInPrice())
                 .outPrice(program.getOutPrice())
                 .capacity(program.getCapacity())
