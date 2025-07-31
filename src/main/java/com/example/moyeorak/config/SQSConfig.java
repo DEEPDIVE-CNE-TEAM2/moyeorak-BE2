@@ -11,7 +11,7 @@ import software.amazon.awssdk.services.sqs.SqsClient;
 
 @Configuration
 public class SQSConfig {
-    
+
     @Value("${cloud.aws.region.static}")
     private String region;
 
@@ -21,7 +21,7 @@ public class SQSConfig {
         return SqsAsyncClient.builder()
                 .region(Region.of(region))
                 .credentialsProvider(DefaultCredentialsProvider.create())
-		//.credentialsProvider(ProfileCredentialsProvider.create("sqs-user"))
+                //.credentialsProvider(ProfileCredentialsProvider.create("sqs-user"))
                 .build();
     }
 
@@ -30,7 +30,7 @@ public class SQSConfig {
         return SqsClient.builder()
                 .region(Region.of(region))
                 .credentialsProvider(DefaultCredentialsProvider.create())
-		//.credentialsProvider(ProfileCredentialsProvider.create("sqs-user"))
+                //.credentialsProvider(ProfileCredentialsProvider.create("sqs-user"))
                 .build();
     }
 
