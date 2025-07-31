@@ -6,7 +6,7 @@ import com.example.moyeorak.repository.FacilityRepository;
 import com.example.moyeorak.repository.RegionRepository;
 import com.example.moyeorak.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.example.moyeorak.jwt.JwtProvider;
@@ -31,7 +31,7 @@ public class AdminFacilityService {
         Facility facility = Facility.builder()
                 .name(request.getName())
                 .address(request.getAddress())
-                .location(request.getName())
+                .location(request.getLocation())
                 .contact(request.getContact())
                 .imageUrl(request.getImageUrl())
                 .capacity(request.getCapacity())
@@ -47,7 +47,7 @@ public class AdminFacilityService {
     }
 
     // 시설 리스트 조회
-    @Transactional
+    @Transactional(readOnly = true)
     public List<AdminFacilityListResponse> getFacilityList(HttpServletRequest httpRequest) {
         User admin = getAuthenticatedAdmin(httpRequest);
         Region region = admin.getRegion();
@@ -65,7 +65,7 @@ public class AdminFacilityService {
                 .toList();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public AdminFacilityDetailResponse getFacilityDetail(Long facilityId, HttpServletRequest httpRequest) {
         User admin = getAuthenticatedAdmin(httpRequest);
         Facility facility = facilityRepository.findById(facilityId)

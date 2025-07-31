@@ -15,6 +15,7 @@ public class AdminFacilityCreateRequest {
     @NotBlank(message = "주소를 입력해주세요.")
     private String address;
 
+    private String location;
     @NotNull(message = "면적을 입력해주세요.")
     private Integer area;
 
