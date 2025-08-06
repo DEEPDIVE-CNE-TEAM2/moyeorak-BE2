@@ -70,6 +70,7 @@ public class SecurityConfig {
         config.setAllowedOrigins(List.of(
                 "http://localhost:3000",
                 "http://localhost:8080",
+                "http://localhost:5173",
                 "http://goorm-alb-1610121085.ap-northeast-2.elb.amazonaws.com",
                 "https://www.moyeorak.cloud",
                 "https://moyeorak.cloud",
