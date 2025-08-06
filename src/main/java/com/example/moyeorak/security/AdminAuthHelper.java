@@ -15,6 +15,9 @@ public class AdminAuthHelper {
 
     public User getAdminFromRequest(HttpServletRequest request) {
         String token = jwtProvider.resolveToken(request);
+        if (token == null) {
+            throw new IllegalArgumentException("인증 토큰이 없습니다 또는 유효하지 않습니다.");
+        }
         String email = jwtProvider.getEmail(token);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("관리자 정보가 없습니다."));
