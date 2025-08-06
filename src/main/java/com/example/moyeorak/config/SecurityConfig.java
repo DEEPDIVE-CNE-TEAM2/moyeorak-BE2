@@ -49,25 +49,46 @@ public class SecurityConfig {
                                 "/api/notices/region/**",
                                 "/api/notices/{id}",
                                 "/swagger-ui/**", "/swagger-ui.html",
-                                "/v3/api-docs/**", "/v3/api-docs.yaml"
+                                "/v3/api-docs/**", "/v3/api-docs.yaml",
+                                "/error"
                         ).permitAll()
                         .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) -> {
-                            log.warn("[AUTHENTICATION ENTRY POINT] URI: {}, 메서드: {}, 예외: {}",
+                            // 인증 실패 시
+                            log.warn("[AUTH FAIL] URI: {}, Method: {}, Message: {}",
                                     request.getRequestURI(),
                                     request.getMethod(),
                                     authException.getMessage());
-                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "인증이 필요합니다.");
+
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.getWriter().write(
+                                    String.format(
+                                            "{\"status\":401,\"error\":\"Unauthorized\",\"message\":\"%s\",\"path\":\"%s\"}",
+                                            authException.getMessage(),
+                                            request.getRequestURI()
+                                    )
+                            );
                         })
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            log.warn("[ACCESS DENIED] URI: {}, 메서드: {}, 인증정보: {}",
+                            // 권한 부족 시
+                            log.warn("[ACCESS DENIED] URI: {}, Method: {}, Auth: {}",
                                     request.getRequestURI(),
                                     request.getMethod(),
                                     SecurityContextHolder.getContext().getAuthentication());
-                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "접근 권한이 없습니다.");
+
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.setContentType("application/json;charset=UTF-8");
+                            response.getWriter().write(
+                                    String.format(
+                                            "{\"status\":403,\"error\":\"Forbidden\",\"message\":\"%s\",\"path\":\"%s\"}",
+                                            accessDeniedException.getMessage(),
+                                            request.getRequestURI()
+                                    )
+                            );
                         })
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
