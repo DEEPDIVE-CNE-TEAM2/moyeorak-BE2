@@ -1,0 +1,83 @@
+name: Deploy to Amazon ECS (Blue/Green)
+
+on:
+  push:
+    branches:
+      - dev  # 배포 브랜치
+
+env:
+  AWS_REGION: ap-northeast-2
+  ECR_REPOSITORY: moyeorak
+  ECS_CLUSTER: moyeorak-cluster
+  ECS_SERVICE: goorm-task2-service-u3avic9z
+  ECS_TASK_DEF: ecs-task-definition.json
+  CONTAINER_NAME: moyeorak-container
+
+jobs:
+  deploy:
+    name: Deploy to Amazon ECS
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}  # 📌 GitHub Secrets에 저장
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Log in to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}
+
+      - name: Build and push Docker image to ECR
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
+
+      - name: Download ECS task definition
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition $ECS_TASK_DEF \
+            --query taskDefinition > task-def.json
+
+      - name: Update ECS task definition with new image
+        id: update-task-def
+        run: |
+          IMAGE="${{ secrets.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest"
+          cat task-def.json | jq \
+            --arg IMAGE "$IMAGE" \
+            --arg NAME "$CONTAINER_NAME" \
+            '.containerDefinitions[] |= if .name == $NAME then .image = $IMAGE else . end' > new-task-def.json
+
+      - name: Register new ECS task definition
+        id: register-task-def
+        run: |
+          TASK_DEF_ARN=$(aws ecs register-task-definition \
+            --cli-input-json file://new-task-def.json \
+            --query 'taskDefinition.taskDefinitionArn' \
+            --output text)
+          echo "TASK_DEF_ARN=$TASK_DEF_ARN" >> $GITHUB_ENV
+
+      - name: Create deployment
+        run: |
+          aws deploy create-deployment \
+            --application-name moyeorak-codedeploy-app \
+            --deployment-group-name moyeorak-codedeploy-group \
+            --deployment-config-name CodeDeployDefault.ECSAllAtOnce \
+            --revision revisionType=AppSpecContent,appSpecContent={content="file://appspec.yaml"} \
+            --deployment-style deploymentType=BLUE_GREEN,deploymentOption=WITH_TRAFFIC_CONTROL \
+            --file-exists-behavior OVERWRITE

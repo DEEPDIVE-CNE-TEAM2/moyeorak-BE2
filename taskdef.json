@@ -1,0 +1,21 @@
+{
+  "family": "moyeorak-task",
+  "executionRoleArn": "arn:aws:iam::004407157704:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "moyeorak-container",
+      "image": "<IMAGE_URI>",
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "hostPort": 8080
+        }
+      ],
+      "essential": true
+    }
+  ],
+  "requiresCompatibilities": ["FARGATE"],
+  "networkMode": "awsvpc",
+  "cpu": "256",
+  "memory": "512"
+}

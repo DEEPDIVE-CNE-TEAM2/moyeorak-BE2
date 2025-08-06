@@ -1,0 +1,10 @@
+version: 0.0
+Resources:
+  - TargetService:
+      Type: AWS::ECS::Service
+      Properties:
+        TaskDefinition: "REPLACE_ME_TASK_DEF"  # GitHub Actions에서 이 부분을 대체함
+        LoadBalancerInfo:
+          ContainerName: "moyeorak-container"  # taskDefinition에서 설정한 container name
+          ContainerPort: 8080                 # container에서 서비스하는 포트
+
