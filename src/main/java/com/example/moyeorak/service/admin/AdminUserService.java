@@ -36,7 +36,7 @@ public class AdminUserService {
 
     // 토큰 기반으로 관리자 식별 + 담당 지역 유저 조회 (키워드 필터링 포함)
     public List<AdminUserListResponseDto> getUsersByRegionAndKeyword(HttpServletRequest request, Long regionId, String keyword) {
-        User admin = adminAuthHelper.getAdminFromRequest(request);
+        User admin = adminAuthHelper.getAdminFromRequest();
 
         // 조회할 지역 결정
         Region targetRegion;
@@ -68,7 +68,7 @@ public class AdminUserService {
     // 관리자 지역 기반으로 해당 지역 유저 생성
     @Transactional
     public void createUser(AdminUserCreateRequestDto dto, HttpServletRequest request) {
-        User admin = adminAuthHelper.getAdminFromRequest(request);
+        User admin = adminAuthHelper.getAdminFromRequest();
 
         // 관리자 지역 가져오기
         Region region = admin.getRegion();
@@ -116,7 +116,7 @@ public class AdminUserService {
 
     // 회원 상세정보 응답
     public AdminUserDetailResponseDto getUserDetail(Long userId, HttpServletRequest request) {
-        User admin = adminAuthHelper.getAdminFromRequest(request);
+        User admin = adminAuthHelper.getAdminFromRequest();
 
         // 유저 조회
         User user = userRepository.findById(userId)
@@ -144,7 +144,7 @@ public class AdminUserService {
     // 회원정보 수정
     @Transactional
     public void updateUserInfo(Long userId, AdminUserUpdateRequestDto dto, HttpServletRequest request) {
-        User admin = adminAuthHelper.getAdminFromRequest(request);
+        User admin = adminAuthHelper.getAdminFromRequest();
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
@@ -170,7 +170,7 @@ public class AdminUserService {
     // 비밀번호 변경
     @Transactional
     public void updateUserPassword(Long userId, AdminPasswordUpdateRequestDto dto, HttpServletRequest request) {
-        User admin = adminAuthHelper.getAdminFromRequest(request);
+        User admin = adminAuthHelper.getAdminFromRequest();
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
@@ -188,7 +188,7 @@ public class AdminUserService {
 
     // 수강 이력 조회
     public List<AdminUserEnrollmentDto> getUserEnrollments(Long userId, HttpServletRequest request) {
-        User admin = adminAuthHelper.getAdminFromRequest(request);
+        User admin = adminAuthHelper.getAdminFromRequest();
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
@@ -217,7 +217,7 @@ public class AdminUserService {
     // 수강 취소
     @Transactional
     public void cancelEnrollment(Long enrollmentId, HttpServletRequest request) {
-        User admin = adminAuthHelper.getAdminFromRequest(request);
+        User admin = adminAuthHelper.getAdminFromRequest();
 
         Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 수강신청이 존재하지 않습니다."));

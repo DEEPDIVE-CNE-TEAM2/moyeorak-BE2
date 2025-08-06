@@ -3,11 +3,13 @@ package com.example.moyeorak.config;
 import com.example.moyeorak.jwt.JwtAuthFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -16,6 +18,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+@Slf4j
 @Configuration
 @RequiredArgsConstructor
 @EnableMethodSecurity(prePostEnabled = true)
@@ -53,9 +56,17 @@ public class SecurityConfig {
                 )
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) -> {
+                            log.warn("[AUTHENTICATION ENTRY POINT] URI: {}, 메서드: {}, 예외: {}",
+                                    request.getRequestURI(),
+                                    request.getMethod(),
+                                    authException.getMessage());
                             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "인증이 필요합니다.");
                         })
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            log.warn("[ACCESS DENIED] URI: {}, 메서드: {}, 인증정보: {}",
+                                    request.getRequestURI(),
+                                    request.getMethod(),
+                                    SecurityContextHolder.getContext().getAuthentication());
                             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "접근 권한이 없습니다.");
                         })
                 )

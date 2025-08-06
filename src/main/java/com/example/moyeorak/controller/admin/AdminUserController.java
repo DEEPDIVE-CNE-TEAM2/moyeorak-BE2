@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,7 +34,13 @@ public class AdminUserController {
             @RequestParam(required = false) String keyword,
             HttpServletRequest request
     ) {
-        log.info("[회원 조회] regionId={}, keyword={}", regionId, keyword);
+        log.info("[컨트롤러 진입] {} {}, regionId={}, keyword={}, 인증={}",
+                request.getMethod(),
+                request.getRequestURI(),
+                regionId,
+                keyword,
+                SecurityContextHolder.getContext().getAuthentication());
+
         List<AdminUserListResponseDto> result = adminUserService.getUsersByRegionAndKeyword(request, regionId, keyword);
         log.info("[회원 조회] 결과 {}건", result.size());
         return result;
