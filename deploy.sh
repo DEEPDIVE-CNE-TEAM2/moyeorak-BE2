@@ -23,7 +23,13 @@ else
 fi
 
 echo ">>> 애플리케이션 실행 시작"
-nohup java -jar "$APP_PATH" > nohup.out 2>&1 &
+#nohup java -jar "$APP_PATH" > nohup.out 2>&1 &
+nohup java -jar build/libs/moyeorak-0.0.1-SNAPSHOT.jar \
+--aws.use.default-credentials=true \
+--aws.use.rds=true \
+--spring.datasource.url=jdbc:mysql://goorm-mysql.c92y0sa8e7t2.ap-northeast-2.rds.amazonaws.com:3306/moyeorak_db?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8 \
+--spring.datasource.username=choi \
+--spring.datasource.password=1q2w3e4r!! &
 
 echo ">>> 배포 완료 (PID: $!)"
 tail -f nohup.out
