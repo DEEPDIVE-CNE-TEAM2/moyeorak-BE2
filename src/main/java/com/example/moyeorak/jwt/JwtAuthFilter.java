@@ -36,18 +36,25 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
+            log.debug("[DEBUG] 요청 Authorization 헤더: {}", header);
+            log.debug("[DEBUG] 추출된 토큰: {}", token);
 
             try {
                 if (jwtProvider.validateToken(token)) {
                     String email = jwtProvider.getEmail(token);
                     String role = jwtProvider.getRole(token);
+                    log.debug("[DEBUG] 토큰에서 추출한 이메일: {}", email);
+                    log.debug("[DEBUG] 토큰에서 추출한 권한: {}", role);
 
                     if (email != null && role != null &&
                             SecurityContextHolder.getContext().getAuthentication() == null) {
 
                         var user = userRepository.findByEmail(email).orElse(null);
+                        log.debug("[DEBUG] DB에서 조회한 사용자: {}", user);
 
                         if (user != null) {
+                            log.debug("[DEBUG] DB 사용자 권한: {}", user.getRole());
+
                             String authority = "ROLE_" + role.toUpperCase();
                             var authorities = List.of(new SimpleGrantedAuthority(authority));
 
@@ -60,6 +67,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                             var auth = new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
                             SecurityContextHolder.getContext().setAuthentication(auth);
+
 
                             log.debug("✅ JWT 인증 성공 - 사용자: {}, 권한: {}", email, authority);
                         } else {
