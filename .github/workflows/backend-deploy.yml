@@ -66,7 +66,9 @@ jobs:
         run: |
           aws ecs describe-task-definition \
             --task-definition $ECS_TASK_DEF \
-            --query taskDefinition > task-def.json
+            --query "taskDefinition" \
+            --output json > task-def.json
+
 
       - name: Update ECS task definition with new image
         id: update-task-def
@@ -87,7 +89,6 @@ jobs:
 
       - name: Prepare AppSpec with new task ARN
         run: |
-          # appspec.yaml 내 PLACEHOLDER 를 실제 ARN 으로 교체
           sed "s|REPLACE_ME_TASK_DEF|$TASK_DEF_ARN|" appspec.yml > rendered-appspec.yml
 
       - name: Create deployment
