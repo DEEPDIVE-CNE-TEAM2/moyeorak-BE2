@@ -19,17 +19,18 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      id-token: write
+      id-token: write       # OIDC용 (권한 남겨두셔도 무방)
       contents: read
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Configure AWS credentials
+      - name: Configure AWS credentials (using Access Key)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}  # 📌 GitHub Secrets에 저장
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Log in to Amazon ECR
@@ -58,10 +59,9 @@ jobs:
         id: update-task-def
         run: |
           IMAGE="${{ secrets.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest"
-          cat task-def.json | jq \
-            --arg IMAGE "$IMAGE" \
-            --arg NAME "$CONTAINER_NAME" \
-            '.containerDefinitions[] |= if .name == $NAME then .image = $IMAGE else . end' > new-task-def.json
+          jq --arg IMAGE "$IMAGE" --arg NAME "$CONTAINER_NAME" \
+            '.containerDefinitions[] |= if .name == $NAME then .image = $IMAGE else . end' \
+            task-def.json > new-task-def.json
 
       - name: Register new ECS task definition
         id: register-task-def
@@ -72,12 +72,17 @@ jobs:
             --output text)
           echo "TASK_DEF_ARN=$TASK_DEF_ARN" >> $GITHUB_ENV
 
+      - name: Prepare AppSpec with new task ARN
+        run: |
+          # appspec.yaml 내 PLACEHOLDER 를 실제 ARN 으로 교체
+          sed "s|REPLACE_ME_TASK_DEF|$TASK_DEF_ARN|" appspec.yml > rendered-appspec.yml
+
       - name: Create deployment
         run: |
           aws deploy create-deployment \
             --application-name moyeorak-codedeploy-app \
             --deployment-group-name moyeorak-codedeploy-group \
             --deployment-config-name CodeDeployDefault.ECSAllAtOnce \
-            --revision revisionType=AppSpecContent,appSpecContent={content="file://appspec.yaml"} \
+            --revision revisionType=AppSpecContent,appSpecContent={content="$(awk '{printf "%s\\n", $0}' rendered-appspec.yml)"} \
             --deployment-style deploymentType=BLUE_GREEN,deploymentOption=WITH_TRAFFIC_CONTROL \
             --file-exists-behavior OVERWRITE
