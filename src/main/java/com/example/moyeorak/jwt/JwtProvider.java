@@ -33,7 +33,7 @@ public class JwtProvider {
 
         return Jwts.builder()
                 .setSubject(email)
-                .claim("roles", role)
+                .claim("roles", "ROLE_" + role.toUpperCase()) // ✅ 수정: ROLE_ prefix 포함
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(secretKey, SignatureAlgorithm.HS256)
