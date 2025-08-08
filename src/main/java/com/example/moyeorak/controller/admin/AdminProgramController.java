@@ -29,9 +29,9 @@ public class AdminProgramController {
             @RequestParam(required = false) Long regionId,
             @RequestParam(required = false) String title
     ) {
-        log.info("[프로그램 리스트 조회] regionId={}, title={}", regionId, title);
+        log.info("프로그램 리스트 조회: regionId={}, title={}", regionId, title);
         List<AdminProgramListResponse> programs = adminProgramService.getProgramsByRegionAndTitle(request, regionId, title);
-        log.info("[프로그램 리스트 조회 완료] 조회된 개수={}", programs.size());
+        log.info("프로그램 리스트 조회 완료: 조회된 개수={}", programs.size());
         return ResponseEntity.ok(programs);
     }
 
@@ -83,7 +83,7 @@ public class AdminProgramController {
     ) {
         log.info("프로그램 삭제 요청: programId={}", programId);
         MessageResponse response = adminProgramService.deleteProgram(programId, request);
-        log.info("프로그램 삭제: 완료 programId={}", programId);
+        log.info("프로그램 삭제 완료: programId={}", programId);
         return ResponseEntity.ok(response);
     }
 }
