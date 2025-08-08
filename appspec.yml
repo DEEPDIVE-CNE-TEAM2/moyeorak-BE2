@@ -5,5 +5,5 @@ Resources:
       Properties:
         TaskDefinition: "REPLACE_ME_TASK_DEF"  
         LoadBalancerInfo:
-          ContainerName: "app-container"
+          ContainerName: "app-container" #.
           ContainerPort: 8080

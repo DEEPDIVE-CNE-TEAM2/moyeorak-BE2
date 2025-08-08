@@ -11,7 +11,7 @@ env:
   ECS_CLUSTER: moyeorak-cluster
   ECS_SERVICE: goorm-task2-service-u3avic9z
   ECS_TASK_DEF: moyeorak-task
-  CONTAINER_NAME: moyeorak-container
+  CONTAINER_NAME: app-container
 
 jobs:
   deploy:
