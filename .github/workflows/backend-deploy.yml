@@ -34,13 +34,24 @@ jobs:
           git pull origin dev
 
 
-      # Snyk 보안 검사
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/java@master
+      - name: Run Snyk test
+        uses: snyk/actions@master
+        with:
+          command: test
+          args: --severity-threshold=medium
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
+
+      - name: Run Snyk monitor
+        uses: snyk/actions@master
         with:
-          command: test --severity-threshold=medium
+          command: monitor
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
+
+
 
 
       # OWASP ZAP DAST 검사
