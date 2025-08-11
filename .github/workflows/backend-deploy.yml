@@ -3,7 +3,7 @@ name: Deploy to Amazon ECS (Blue/Green)
 on:
   push:
     branches:
-      - dev  # 배포 브랜치 ..
+      - dev
 
 env:
   AWS_REGION: ap-northeast-2
@@ -26,12 +26,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # 전체 이력 가져오기
+          fetch-depth: 0
       - name: Pull latest dev
         run: |
           git fetch origin dev
           git checkout dev
           git pull origin dev
+
+
+      # Snyk 보안 검사
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/java@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: test --severity-threshold=medium
+
+
+      # OWASP ZAP DAST 검사
+      - name: Run OWASP ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.12.0
+        with:
+          target: "https://your-dev-site.example.com" # dev 환경 URL
+          rules_file_name: ".zap/rules.tsv"           # (선택) 허용 규칙
+          cmd_options: "-a"                           # 활성 스캔
 
 
       - name: Configure AWS credentials (using Access Key)
@@ -71,7 +89,6 @@ jobs:
             ${{ secrets.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
             ${{ secrets.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
 
-
       - name: Download ECS task definition
         run: |
           aws ecs describe-task-definition \
@@ -79,7 +96,6 @@ jobs:
             --query "taskDefinition" \
             --output json > task-def.json
 
-          # Remove read-only / non-reusable fields
           jq 'del(
             .taskDefinitionArn,
             .revision,
@@ -119,5 +135,3 @@ jobs:
             --deployment-group-name moyeorak-backend-dg \
             --deployment-config-name CodeDeployDefault.ECSAllAtOnce \
             --revision "{\"revisionType\":\"AppSpecContent\",\"appSpecContent\":{\"content\":$CONTENT}}"
-
-
