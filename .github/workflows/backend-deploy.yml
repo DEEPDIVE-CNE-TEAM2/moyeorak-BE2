@@ -51,16 +51,18 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         continue-on-error: true
 
-
-
-
-      # OWASP ZAP DAST 검사
       - name: Run OWASP ZAP Baseline Scan
-        uses: zaproxy/action-baseline@v0.12.0
-        with:
-          target: "https://your-dev-site.example.com" # dev 환경 URL
-          rules_file_name: ".zap/rules.tsv"           # (선택) 허용 규칙
-          cmd_options: "-a"                           # 활성 스캔
+        run: |
+          mkdir -p zap-reports
+          docker run --rm \
+            --user root \
+            -v ${{ github.workspace }}/zap-reports:/zap/wrk:rw \
+            -t ghcr.io/zaproxy/zaproxy \
+            zap-baseline.py \
+              -t https://api.moyeorak.cloud \
+              -r zap_report.html \
+              -w zap_report.md \
+              || true
 
 
       - name: Configure AWS credentials (using Access Key)
