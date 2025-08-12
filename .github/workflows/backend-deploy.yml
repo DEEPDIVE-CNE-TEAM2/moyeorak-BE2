@@ -26,7 +26,7 @@ jobs:
       # ------------------------
       # 1. 소스 코드 체크아웃
       # ------------------------
-      - name: Checkout repository
+      - name: 소스 코드 체크아웃
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -40,7 +40,7 @@ jobs:
       # ------------------------
       # 2. AWS 인증 설정
       # ------------------------
-      - name: Configure AWS credentials
+      - name: AWS 인증 설정
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -50,7 +50,7 @@ jobs:
       # ------------------------
       # 3. Amazon ECR 로그인
       # ------------------------
-      - name: Log in to Amazon ECR (with retry)
+      - name: Amazon ECR 로그인(실패시 retry 3번)
         run: |
           for i in 1 2 3; do
             if aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}; then
@@ -66,7 +66,7 @@ jobs:
       # ------------------------
       # 4. Docker 메타데이터 추출
       # ------------------------
-      - name: Extract metadata for Docker
+      - name: Docker 메타데이터 추출
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -75,7 +75,7 @@ jobs:
       # ------------------------
       # 5. JDK & Gradle 빌드
       # ------------------------
-      - name: Set up JDK 17
+      - name: JDK & Gradle 빌드
         uses: actions/setup-java@v3
         with:
           java-version: '17'
@@ -90,7 +90,7 @@ jobs:
       # ------------------------
       # 6. Docker 이미지 빌드 & 푸시
       # ------------------------
-      - name: Build and push Docker image to ECR (with retry)
+      - name: Docker 이미지 빌드 & 푸시 (실패시 retry 3번)
         run: |
           for i in 1 2 3; do
             if docker buildx build --push \
@@ -108,7 +108,7 @@ jobs:
       # ------------------------
       # 7. ECS Task Definition 다운로드
       # ------------------------
-      - name: Download ECS task definition (with retry)
+      - name: ECS Task Definition 다운로드 (실패시 retry 3번)
         run: |
           for i in 1 2 3; do
             if aws ecs describe-task-definition \
@@ -135,7 +135,7 @@ jobs:
       # ------------------------
       # 8. Task Definition 이미지 업데이트
       # ------------------------
-      - name: Update ECS task definition with new image
+      - name: Task Definition 이미지 업데이트
         id: update-task-def
         run: |
           IMAGE="${{ secrets.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest"
@@ -146,7 +146,7 @@ jobs:
       # ------------------------
       # 9. Task Definition 등록
       # ------------------------
-      - name: Register new ECS task definition (with retry)
+      - name: Task Definition 등록 (실패시 retry 3번)
         run: |
           for i in 1 2 3; do
             if TASK_DEF_ARN=$(aws ecs register-task-definition \
@@ -165,14 +165,14 @@ jobs:
       # ------------------------
       # 10. CodeDeploy AppSpec 준비
       # ------------------------
-      - name: Prepare AppSpec with new task ARN
+      - name: CodeDeploy AppSpec 준비
         run: |
           sed "s|REPLACE_ME_TASK_DEF|$TASK_DEF_ARN|" appspec.yml > rendered-appspec.yml
 
       # ------------------------
       # 11. CodeDeploy 배포 생성
       # ------------------------
-      - name: Create deployment (with retry)
+      - name: CodeDeploy 배포 생성 (실패시 retry 3번)
         run: |
           CONTENT=$(jq -Rs . < rendered-appspec.yml)
           for i in 1 2 3; do
@@ -192,7 +192,7 @@ jobs:
       # ------------------------
       # 12. 보안 검사 - Snyk
       # ------------------------
-      - name: Run Snyk test
+      - name: 보안 검사 - Snyk
         run: |
           snyk test --severity-threshold=medium || {
             echo "Snyk test failed - vulnerabilities found" >> fail.log
@@ -209,7 +209,7 @@ jobs:
       # ------------------------
       # 13. 보안 검사 - OWASP ZAP
       # ------------------------
-      - name: Run OWASP ZAP Baseline Scan
+      - name: 보안 검사 - OWASP ZAP
         run: |
           mkdir -p zap-reports
           docker run --rm \
@@ -224,7 +224,7 @@ jobs:
                 exit 1
               }
 
-      - name: Upload ZAP HTML Report
+      - name: OWASP ZAP HTML 리포트
         uses: actions/upload-artifact@v4
         with:
           name: zap-report-html
