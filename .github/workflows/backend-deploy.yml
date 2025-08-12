@@ -54,13 +54,13 @@ jobs:
         run: |
           for i in 1 2 3; do
             if aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}; then
-              echo "ECR login succeeded"
+              echo "Amazon ECR 로그인 성공"
               exit 0
             fi
-            echo "ECR login failed (attempt $i), retrying..."
+            echo "Amazon ECR 로그인 실패 (시도 $i), 재시도 중..."
             sleep 10
           done
-          echo "ECR login failed after 3 attempts" >> fail.log
+          echo "Amazon ECR 로그인에 3회 실패했습니다. AWS 인증 정보 및 권한을 확인해주세요." >> fail.log
           exit 1
 
       # ------------------------
@@ -81,10 +81,10 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Grant execute permission for Gradle wrapper
+      - name: Gradle 실행 권한 부여
         run: chmod +x gradlew
 
-      - name: Build with Gradle (test skip)
+      - name: Gradle 빌드 (테스트 제외)
         run: ./gradlew build -x test
 
       # ------------------------
@@ -96,13 +96,13 @@ jobs:
             if docker buildx build --push \
               -t ${{ secrets.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest \
               -t ${{ secrets.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }} .; then
-              echo "Docker push succeeded"
+              echo "Docker 이미지 빌드 및 푸시 성공"
               exit 0
             fi
-            echo "Docker push failed (attempt $i), retrying..."
+            echo "Docker 이미지 빌드 및 푸시 실패 (시도 $i), 재시도 중..."
             sleep 15
           done
-          echo "Docker push failed after 3 attempts" >> fail.log
+          echo "Docker 이미지 빌드 또는 푸시에 3회 실패했습니다. 빌드 환경과 권한을 확인해주세요." >> fail.log
           exit 1
 
       # ------------------------
@@ -126,10 +126,10 @@ jobs:
               )' task-def.json > cleaned-task-def.json
               exit 0
             fi
-            echo "Download ECS task definition failed (attempt $i), retrying..."
+            echo "ECS Task Definition 정보 다운로드 실패 (시도 $i), 재시도 중..."
             sleep 10
           done
-          echo "ECS task definition download failed after 3 attempts" >> fail.log
+          echo "ECS Task Definition 정보를 3회 연속 다운로드하지 못했습니다. Task Definition 이름과 권한을 확인해주세요." >> fail.log
           exit 1
 
       # ------------------------
@@ -156,10 +156,10 @@ jobs:
               echo "TASK_DEF_ARN=$TASK_DEF_ARN" >> $GITHUB_ENV
               exit 0
             fi
-            echo "Register ECS task definition failed (attempt $i), retrying..."
+            echo "ECS Task Definition 등록 실패 (시도 $i), 재시도 중..."
             sleep 10
           done
-          echo "ECS task definition registration failed after 3 attempts" >> fail.log
+          echo "ECS Task Definition 등록을 3회 연속 실패했습니다. JSON 형식 및 권한을 점검해 주세요." >> fail.log
           exit 1
 
       # ------------------------
@@ -183,10 +183,10 @@ jobs:
               --revision "{\"revisionType\":\"AppSpecContent\",\"appSpecContent\":{\"content\":$CONTENT}}"; then
               exit 0
             fi
-            echo "Create deployment failed (attempt $i), retrying..."
+            echo "CodeDeploy 배포 생성 실패 (시도 $i), 재시도 중..."
             sleep 15
           done
-          echo "Deployment creation failed after 3 attempts" >> fail.log
+          echo "CodeDeploy 배포 생성에 3회 실패했습니다. AppSpec 파일 및 AWS 권한을 확인해주세요." >> fail.log
           exit 1
 
       # ------------------------
@@ -195,7 +195,7 @@ jobs:
       - name: 보안 검사 - Snyk
         run: |
           snyk test --severity-threshold=medium || {
-            echo "Snyk test failed - vulnerabilities found" >> fail.log
+            echo "Snyk 보안 검사에서 중간 이상 심각도 취약점이 발견되어 실패했습니다. 결과를 확인해 주세요." >> fail.log
             exit 1
           }
         env:
@@ -220,7 +220,7 @@ jobs:
               -t https://api.moyeorak.cloud \
               -r zap_report.html \
               -w zap_report.md || {
-                echo "OWASP ZAP scan detected issues" >> fail.log
+                echo "OWASP ZAP 보안 검사에서 문제를 발견했습니다. 결과를 확인해 주세요." >> fail.log
                 exit 1
               }
 
