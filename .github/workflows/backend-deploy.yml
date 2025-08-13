@@ -222,9 +222,9 @@ jobs:
             -t ghcr.io/zaproxy/zaproxy \
             zap-baseline.py \
               -t https://api.moyeorak.cloud \
-              -r zap_report.html \
-              -w zap_report.md \
-              -J zap_out.json \
+              -r /zap/wrk/zap_report.html \
+              -w /zap/wrk/zap_report.md \
+              -J /zap/wrk/zap_out.json \
               -H "Authorization: Bearer ${{ secrets.BACKEND_BEARER_TOKEN }}" \
               -z "-config connection.ignore401=true" || true
 
