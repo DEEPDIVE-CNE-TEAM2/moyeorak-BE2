@@ -192,6 +192,11 @@ jobs:
       # ------------------------
       # 12. 보안 검사 - Snyk
       # ------------------------
+      - name: snyk 설치
+        uses: snyk/actions/setup@v3
+        with:
+          snyk-token: ${{ secrets.SNYK_TOKEN }}
+
       - name: 보안 검사 - Snyk
         run: |
           snyk test --severity-threshold=medium || {
