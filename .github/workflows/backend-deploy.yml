@@ -38,7 +38,7 @@ jobs:
           git pull origin dev
 
       # ------------------------
-      # 2. AWS 인증 설정
+      # 2. AWS 인증 설정.
       # ------------------------
       - name: AWS 인증 설정
         uses: aws-actions/configure-aws-credentials@v4
