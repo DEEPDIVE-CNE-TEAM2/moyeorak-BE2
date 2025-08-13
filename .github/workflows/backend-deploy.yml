@@ -225,30 +225,35 @@ jobs:
           tail -n 200 /tmp/curl_out.txt || true
 
       # ------------------------
-      # 14. 보안 검사 - OWASP ZAP (zap 경로 이슈 해결)
+      # 14. 보안 검사 - OWASP ZAP (base64 방식으로 스크립트 생성 + hook 사용)
       # ------------------------
-      - name: Inspect ZAP image (/zap contents) - debug
+      - name: Prepare ZAP hook & httpsender script (base64-write to avoid heredoc issues)
         run: |
-          echo "Listing /zap in ZAP image to confirm scripts exist..."
-          docker run --rm ghcr.io/zaproxy/zaproxy:latest ls -la /zap || true
+          mkdir -p zap-hooks
 
-      - name: 보안 검사 - OWASP ZAP 
+          # add_header_request.py content (base64 -> decode)
+          echo "ZnJvbSBqYXZhLmxhbmcgaW1wb3J0IFN5c3RlbQoKZGVmIHNlbmRpbmdSZXF1ZXN0KG1zZywgaW5pdGlhdG9yLCBoZWxwZXIpOgogICAgdHJ5OgogICAgICAgIHRva2VuID0gU3lzdGVtLmdldGVudignQkFDS0VORF9CRUFSRVJfVE9LRU4nKQogICAgICAgIGlmIHRva2VuIGFuZCB0b2tlbi5zdHJpcCgpOgogICAgICAgICAgICBtcy5nZXRSZXF1ZXRIZWFkZXIoKS5zZXRIZWFkZXIoJ0F1dGhvcml6YXRpb24nLCAnQmVhcmVyICcgKyB0b2tlbikKICAgICAgZXhjZXB0IEV4Y2VwdGlvbiBhcyBlOgogICAgICAgICAgICBwcmludCgnRXJybyBzZXR0aW5nIEF1dGhvcml6YXRpb24gaGVhZGVyOiAlcycgJSBlKQoKZGVmIHJlc3BvbnNlUmVjZWl2ZWQobXNnLCBpbml0aWF0b3IsIGhlbHBlcik6CiAgICBwYXNz" | base64 -d > zap-hooks/add_header_request.py
+
+          # zap_hook.py content (base64 -> decode)
+          echo "ZGVmIHphcF9zdGFydGVkKHphcCwgdGFyZ2V0KToKICAgIHByaW50KCd6YXBfc3RhcnRlZCBob29rOiBsb2FkaW5nIGh0dHBlbmRlciBzY3JpcHQgdG8gYWRkIEF1dGhvcml6YXRpb24gaGVhZGVyJykKICAgIHRyeToKICAgICAgICByZXNwID0genpwLnNjcmlwdC5sb2FkKCdhZGRfYXV0aF9oZWFkZXInLCAnYWh0dHBlbmRlcidcLCAncHl0aG9uIDoganl0aG9uJywgJy96YXAvd3JrL3phcC1ob29rcy9hZGRfaGVhZGVyX3JlcXVlc3QucHknKQogICAgICAgIHByaW50KCdzY3JpcHQuTG9hZCByZXNwb25zZTonLCByZXNwKQogICAgICAgIHphcC5zY3JpcHQuZW5hYmxlKCdhZGRfYXV0aF9oZWFkZXInKQogICAgICAgIHByaW50KCdhZGRfYXV0aF9oZWFkZXIgZW5hYmxlZCcpCiAgICBleGNlcHQgRXhjZXB0aW9uIGFzIGU6CiAgICAgICAgcHJpbnQoJ0ZhaWxlZCB0byBsb2FkL2VuYWJsZSBzY3JpcHQ6JywgZSkKICAgIHJldHVybiB6YXAsIHRhcmdldA==" | base64 -d > zap-hooks/zap_hook.py
+
+      - name: Run OWASP ZAP baseline (with hook)
         env:
           BACKEND_BEARER_TOKEN: ${{ secrets.BACKEND_BEARER_TOKEN }}
         run: |
           mkdir -p zap-reports
-          echo "Starting ZAP baseline scan (using /zap/zap-baseline.py)..."
-          # 컨테이너 내부에서 환경변수로 토큰을 확장하도록 실행 (호스트에 토큰 노출 최소화)
+          echo "Starting ZAP baseline scan with hook..."
           docker run --rm \
             -v "${{ github.workspace }}/zap-reports":/zap/wrk:rw \
+            -v "${{ github.workspace }}/zap-hooks":/zap/wrk/zap-hooks:ro \
             -e BACKEND_BEARER_TOKEN="$BACKEND_BEARER_TOKEN" \
             -t ghcr.io/zaproxy/zaproxy:latest \
-            sh -c '/zap/zap-baseline.py -t https://api.moyeorak.cloud \
+            /bin/sh -c "/zap/zap-baseline.py -t https://api.moyeorak.cloud \
+              --hook /zap/wrk/zap-hooks/zap_hook.py \
               -r /zap/wrk/zap_report.html \
               -w /zap/wrk/zap_report.md \
               -J /zap/wrk/zap_out.json \
-              -H "Authorization: Bearer $BACKEND_BEARER_TOKEN" \
-              -z "-config connection.ignore401=true"' \
+              -z \"-config connection.ignore401=true\"" \
             2>&1 | tee /tmp/zap_cli.log || true
 
           echo "=== zap-reports 디렉토리 (컨텐츠 확인) ==="
@@ -262,7 +267,6 @@ jobs:
         with:
           name: zap-reports
           path: zap-reports/**
-
 
       # ------------------------
       # 15. 실패 시 Discord 알림
