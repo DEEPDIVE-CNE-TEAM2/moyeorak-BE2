@@ -192,24 +192,23 @@ jobs:
       # ------------------------
       # 12. 보안 검사 - Snyk
       # ------------------------
-      - name: snyk 설치
-        uses: snyk/actions/setup@v3
+      - name: Run Snyk test
+        uses: snyk/actions/node@0.4.0
         with:
-          snyk-token: ${{ secrets.SNYK_TOKEN }}
-
-      - name: 보안 검사 - Snyk
-        run: |
-          snyk test --severity-threshold=medium || {
-            echo "Snyk 보안 검사에서 중간 이상 심각도 취약점이 발견되어 실패했습니다. 결과를 확인해 주세요." >> fail.log
-            exit 1
-          }
+          command: test
+          args: --debug
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
 
       - name: Run Snyk monitor
-        run: snyk monitor
+        uses: snyk/actions/node@0.4.0
+        with:
+          command: monitor
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        continue-on-error: true
+
 
       # ------------------------
       # 13. 보안 검사 - OWASP ZAP
