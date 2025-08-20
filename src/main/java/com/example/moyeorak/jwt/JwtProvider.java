@@ -53,41 +53,9 @@ public class JwtProvider {
                 .compact();
     }
 
-    // ✅ 이메일 추출
-    public String getEmail(String token) {
-        try {
-            return parseClaims(token).getSubject();
-        } catch (Exception e) {
-            log.warn("이메일 추출 실패: {}", e.getMessage());
-            return null;
-        }
-    }
 
-    // ✅ 권한(role) 추출
-    public String getRole(String token) {
-        try {
-            return parseClaims(token).get("roles", String.class);
-        } catch (Exception e) {
-            log.warn("권한 추출 실패: {}", e.getMessage());
-            return null;
-        }
-    }
 
-    // ✅ 토큰 유효성 검증 (예외는 상위로 throw하여 JwtAuthFilter에서 처리)
-    public boolean validateToken(String token) {
-        try {
-            parseClaims(token);
-            return true;
-        } catch (ExpiredJwtException e) {
-            log.warn("만료된 JWT: {}", e.getMessage());
-            return false;
-        } catch (JwtException | IllegalArgumentException e) {
-            log.warn("JWT 유효성 검증 실패: {}", e.getMessage());
-            return false;
-        }
-    }
-
-    // ✅ 토큰에서 Claims 파싱
+    // ✅ 토큰에서 Claims 파싱 (예외는 그대로 던짐)
     private Claims parseClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey)
@@ -96,6 +64,17 @@ public class JwtProvider {
                 .getBody();
     }
 
+    // ✅ 이메일 추출
+    public String getEmail(String token) {
+        return parseClaims(token).getSubject();
+    }
+
+    // ✅ 권한 추출
+    public String getRole(String token) {
+        return parseClaims(token).get("roles", String.class);
+    }
+
+
     // ✅ 요청 헤더에서 Bearer 토큰 추출
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
@@ -103,5 +82,14 @@ public class JwtProvider {
             return bearerToken.substring(7);
         }
         return null;
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            parseClaims(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
     }
 }

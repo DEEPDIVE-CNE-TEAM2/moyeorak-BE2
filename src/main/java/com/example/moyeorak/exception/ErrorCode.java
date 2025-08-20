@@ -40,10 +40,12 @@ public enum ErrorCode {
     NOT_FOUND_ENROLLMENT(HttpStatus.NOT_FOUND, "해당 수강신청이 존재하지 않습니다."),
     ENROLLMENT_ALREADY_CANCELLED(HttpStatus.BAD_REQUEST, "이미 취소되었거나 수강중 상태가 아닙니다."),
     PROGRAM_CLOSED(HttpStatus.BAD_REQUEST, "종료된 프로그램은 취소할 수 없습니다."),
-    NO_ADMIN_REGION(HttpStatus.INTERNAL_SERVER_ERROR, "관리자에게 지역 정보가 설정되어 있지 않습니다.");
+    NO_ADMIN_REGION(HttpStatus.INTERNAL_SERVER_ERROR, "관리자에게 지역 정보가 설정되어 있지 않습니다."),
 
-
-
+    // JWT
+    EXPIRED_JWT(HttpStatus.UNAUTHORIZED, "AccessToken이 만료되었습니다."),
+    INVALID_JWT(HttpStatus.UNAUTHORIZED, "유효하지 않은 JWT 토큰입니다."),
+    JWT_AUTH_FAIL(HttpStatus.UNAUTHORIZED, "JWT 인증에 실패했습니다.");
 
     private final HttpStatus status;
     private final String message;
