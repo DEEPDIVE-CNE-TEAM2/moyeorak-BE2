@@ -3,11 +3,13 @@ package com.example.moyeorak.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import lombok.extern.slf4j.Slf4j;
 
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudwatch.CloudWatchClient;
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
 
+@Slf4j
 @Configuration
 public class AwsClientsConfig {
 
@@ -20,7 +22,7 @@ public class AwsClientsConfig {
         CloudWatchClient client = CloudWatchClient.builder()
                 .region(Region.of(region))
                 .build(); // 자격증명: 기본 프로바이더 체인(IAM Role/환경변수/SharedCredentials)
-        System.out.println("[CloudWatch] region=" + region);
+        log.info("[CloudWatch] region={}", region);
         return client;
     }
 
@@ -29,7 +31,7 @@ public class AwsClientsConfig {
         CloudWatchLogsClient client = CloudWatchLogsClient.builder()
                 .region(Region.of(region))
                 .build();
-        System.out.println("[CloudWatchLogs] region=" + region);
+        log.info("[CloudWatchLogs] region={}", region);
         return client;
     }
 }
